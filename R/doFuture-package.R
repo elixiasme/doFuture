@@ -76,7 +76,6 @@
 #' [glmnet]: https://cran.r-project.org/package=glmnet
 #' [BiocParallel]: https://bioconductor.org/packages/BiocParallel/
 #'
-#' @docType package
 #' @aliases doFuture-package
 #' @name doFuture
-NULL
+"_PACKAGE"

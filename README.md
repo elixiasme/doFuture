@@ -1,5 +1,7 @@
+
+
 <div id="badges"><!-- pkgdown markup -->
-<a href="https://CRAN.R-project.org/web/checks/check_results_doFuture.html"><img border="0" src="https://www.r-pkg.org/badges/version/doFuture" alt="CRAN check status"/></a> <a href="https://github.com/HenrikBengtsson/doFuture/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/HenrikBengtsson/doFuture/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>     <a href="https://app.codecov.io/gh/HenrikBengtsson/doFuture"><img border="0" src="https://codecov.io/gh/HenrikBengtsson/doFuture/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
+<a href="https://CRAN.R-project.org/web/checks/check_results_doFuture.html"><img border="0" src="https://www.r-pkg.org/badges/version/doFuture" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/doFuture/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/doFuture/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>     <a href="https://app.codecov.io/gh/futureverse/doFuture"><img border="0" src="https://codecov.io/gh/futureverse/doFuture/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
 
 # doFuture: Use Foreach to Parallelize via the Future Framework 
@@ -30,9 +32,10 @@ The **[doFuture]** package provides two alternatives for using futures
 with **foreach**:
 
  1. `y <- foreach(...) %dofuture% { ... }`
+
+ 2. `registerDoFuture()` + `y <- foreach(...) %dopar% { ... }`.
  
- 1. `registerDoFuture()` + `y <- foreach(...) %dopar% { ... }`.
- 
+
 
 ### Alternative 1: `%dofuture%`
 
@@ -65,12 +68,12 @@ examples on this approach.
 ### Alternative 2: `registerDoFuture()` + `%dopar%`
 
 The _second alternative_ is based on the traditional **foreach**
-approach where one registers a foreach adapter to be used by `%dopar%`.
-A popular adapter is `doParallel::registerDoParallel()`, which
-parallelizes on the local machine using the **parallel** package.
-This package provides `registerDoFuture()`, which parallelizes using
-the **future** package, meaning any future-compliant parallel backend
-can be used.
+approach where one registers a foreach adapter to be used by
+`%dopar%`.  A popular adapter is `doParallel::registerDoParallel()`,
+which parallelizes on the local machine using the **parallel**
+package.  This package provides `registerDoFuture()`, which
+parallelizes using the **future** package, meaning any
+future-compliant parallel backend can be used.
 
 An example is:
 
@@ -124,7 +127,7 @@ install.packages("doFuture")
 
 To install the pre-release version that is available in Git branch `develop` on GitHub, use:
 ```r
-remotes::install_github("HenrikBengtsson/doFuture", ref="develop")
+remotes::install_github("futureverse/doFuture", ref="develop")
 ```
 This will install the package from source.  
 
@@ -134,3 +137,4 @@ This will install the package from source.
 ## Contributing
 
 To contribute to this package, please see [CONTRIBUTING.md](CONTRIBUTING.md).
+

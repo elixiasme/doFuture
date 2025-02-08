@@ -295,8 +295,8 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   ## than one element is processed per future.  The adjustment is done by
   ## scaling up the limit by the number of elements in the chunk.  This is
   ## a "good enough" approach.
-  ## (https://github.com/HenrikBengtsson/future.apply/issues/8,
-  ##  https://github.com/HenrikBengtsson/doFuture/issues/26)
+  ## (https://github.com/futureverse/future.apply/issues/8,
+  ##  https://github.com/futureverse/doFuture/issues/26)
   globals.maxSize <- getOption("future.globals.maxSize")
   if (nchunks > 1 && !is.null(globals.maxSize) && globals.maxSize < +Inf) {
     globals.maxSize.default <- globals.maxSize
