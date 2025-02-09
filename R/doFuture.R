@@ -11,9 +11,11 @@ doFuture <- local({
   })
 
   tmpl_expr <- bquote_compile({
-    ## Tell foreach to keep using futures also in nested calls
+    "# doFuture():::doFuture(): Make sure that foreach uses 'doFuture'
+    "# also in nested calls"
     doFuture::registerDoFuture()
 
+    "# doFuture():::doFuture(): process chunk of elements"
     lapply(seq_along(...future.x_ii), FUN = function(jj) {
       ...future.x_jj <- ...future.x_ii[[jj]]  #nolint
       .(dummy_globals)
@@ -29,6 +31,7 @@ doFuture <- local({
   })
 
   tmpl_expr_options <- bquote_compile({
+    "# doFuture:::doFuture(): preserve future option"
     ...future.globals.maxSize.org <- getOption("future.globals.maxSize")
     if (!identical(...future.globals.maxSize.org, ...future.globals.maxSize)) {
       oopts <- options(future.globals.maxSize = ...future.globals.maxSize)

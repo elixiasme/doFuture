@@ -867,6 +867,8 @@ tmpl_dummy_globals <- bquote_compile({
 
 tmpl_expr_with_rng <- bquote_compile({
   .(optional_patches)
+  
+  "# doFuture():::doFuture2(): process chunk of elements"
   lapply(seq_along(...future.x_ii), FUN = function(jj) {
     ...future.x_jj <- ...future.x_ii[[jj]]  #nolint
     .(dummy_globals)
@@ -884,6 +886,7 @@ tmpl_expr_with_rng <- bquote_compile({
 
 
 tmpl_expr_options <- bquote_compile({
+  "# doFuture:::doFuture2(): preserve future option"
   ...future.globals.maxSize.org <- getOption("future.globals.maxSize")
   if (!identical(...future.globals.maxSize.org, ...future.globals.maxSize)) {
     oopts <- options(future.globals.maxSize = ...future.globals.maxSize)
