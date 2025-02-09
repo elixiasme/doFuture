@@ -361,6 +361,11 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## 2. Construct future expression from %dofuture% expression
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (debug) {
+    mdebug("- %dofuture% R expression:")
+    mprint(expr)
+  }
+
   ## WORKAROUND: foreach::times() passes an empty string in 'argnames'
   argnames <- it$argnames
   argnames <- argnames[nzchar(argnames)]
@@ -385,24 +390,17 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     dummy_globals <- bquote_apply(tmpl_dummy_globals)
   }
 
-  if (debug) {
-    mdebug("- %dofuture% R expression:")
-    mprint(expr)
-  }
-
   ## With or without RNG?
-  expr_rng <- bquote_apply(
-    if (is.null(seeds)) {
-      tmpl_expr
-    } else {
-      tmpl_expr_with_rng
-    }
-  )
-  
-  rm(list = "dummy_globals") ## Not needed anymore
+  if (is.null(seeds)) {
+    seed_assignment <- NULL
+  } else {
+    seed_assignment <- quote(assign(".Random.seed", ...future.seeds_ii[[jj]], envir = globalenv(), inherits = FALSE))
+  }
+  expr_rng <- bquote_apply(tmpl_expr_with_rng)
+  rm(list = c("dummy_globals", "seed_assignment")) ## Not needed anymore
 
   if (debug) {
-    mdebug("- R expression (adjusted for RNG):")
+    mdebug("- R expression (map-reduce expression adjusted for RNG):")
     mprint(expr_rng)
   }
 
@@ -826,21 +824,6 @@ tmpl_dummy_globals <- bquote_compile({
   .(name) <- NULL
 })
 
-tmpl_expr <- bquote_compile({
-  lapply(seq_along(...future.x_ii), FUN = function(jj) {
-    ...future.x_jj <- ...future.x_ii[[jj]]  #nolint
-    .(dummy_globals)
-    ...future.env <- environment()          #nolint
-    local({
-      for (name in names(...future.x_jj)) {
-        assign(name, ...future.x_jj[[name]],
-               envir = ...future.env, inherits = FALSE)
-      }
-    })
-    tryCatch(.(expr), error = identity)
-  })
-})
-
 
 tmpl_expr_with_rng <- bquote_compile({
   lapply(seq_along(...future.x_ii), FUN = function(jj) {
@@ -853,7 +836,7 @@ tmpl_expr_with_rng <- bquote_compile({
                envir = ...future.env, inherits = FALSE)
       }
     })
-    assign(".Random.seed", ...future.seeds_ii[[jj]], envir = globalenv(), inherits = FALSE)
+    .(seed_assignment)
     tryCatch(.(expr), error = identity)
   })
 })
