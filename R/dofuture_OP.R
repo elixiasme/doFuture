@@ -396,12 +396,12 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   } else {
     seed_assignment <- quote(assign(".Random.seed", ...future.seeds_ii[[jj]], envir = globalenv(), inherits = FALSE))
   }
-  expr_rng <- bquote_apply(tmpl_expr_with_rng)
+  expr_mapreduce <- bquote_apply(tmpl_expr_with_rng)
   rm(list = c("dummy_globals", "seed_assignment")) ## Not needed anymore
 
   if (debug) {
     mdebug("- R expression (map-reduce expression adjusted for RNG):")
-    mprint(expr_rng)
+    mprint(expr_mapreduce)
   }
 
 
@@ -417,9 +417,10 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   
   ## Environment from where to search for globals
   globals_envir <- new.env(parent = envir)
-  assign("...future.x_ii", 42, envir = globals_envir, inherits = FALSE)
 
   add <- attr(globals, "add", exact = TRUE)
+
+  assign("...future.x_ii", 42, envir = globals_envir, inherits = FALSE)
   add <- c(add, "...future.x_ii")
 
   ignore <- attr(globals, "ignore", exact = TRUE)
@@ -435,15 +436,41 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   if (debug) {
     mdebug("  - Argument 'globals':\n")
     mstr(globals)
-    mdebug("  - R expression (searched for globals):")
-    mprint(expr_rng)
+    mdebug("  - R expression (map-reduce expression searched for globals):")
+    mprint(expr_mapreduce)
   }
-  
-  gp <- getGlobalsAndPackages(expr_rng, envir = globals_envir, globals = globals, packages = packages)
-  globals <- gp$globals
+
+  gp <- getGlobalsAndPackages(expr_mapreduce, envir = globals_envir, globals = globals, packages = packages)
+  globals_mapreduce <- gp$globals
   packages <- unique(c(gp$packages, packages))
-  expr <- gp$expr
+  expr_mapreduce <- gp$expr
   rm(list = c("gp", "globals_envir")) ## Not needed anymore
+
+
+  ## Search also %dofuture% expression alone, to pick up things
+  ## like a <- a + 1, where 'a' is a global
+  ## This was added to make future (> 1.34.0) backward compatible
+  ## with future (<= 1.34.0) /HB 2025-02-08
+  if (getOption("doFuture.globals.scanVanillaExpression", TRUE)) {
+    if (debug) {
+      mdebug("  - R expression (%dofuture% expression searched for globals):")
+      mprint(expr)
+    }
+  
+    gp <- getGlobalsAndPackages(expr, envir = envir, globals = globals, packages = packages)
+    globals <- gp$globals
+    diff <- setdiff(names(globals), names(globals_mapreduce))
+    if (debug) {
+      mdebug("- Globals in %dofuture% R expression not in map-reduce expression:")
+      mdebugf("  - Appending %d globals only found in the vanilla %%dofuture%% expression: %s", length(diff), paste(sQuote(diff), collapse = ", "))
+    }
+    if (length(diff) > 0) {
+      globals_mapreduce <- c(globals_mapreduce, globals[diff])
+    }
+  }
+
+  globals <- globals_mapreduce
+  
   if (debug) {
     mdebugf("  - globals: [%d] %s", length(globals),
            paste(sQuote(names(globals)), collapse = ", "))
@@ -530,7 +557,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     }
 
     fs[[ii]] <- future(
-      expr, substitute = FALSE,
+      expr_mapreduce, substitute = FALSE,
       envir = envir,
       globals = globals_ii,
       packages = packages_ii,
