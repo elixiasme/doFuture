@@ -366,6 +366,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     mprint(expr)
   }
 
+  ## Patch expression for flexFitR?
+  expr <- flexFitR_patch(expr)
+
   ## WORKAROUND: foreach::times() passes an empty string in 'argnames'
   argnames <- it$argnames
   argnames <- argnames[nzchar(argnames)]
@@ -426,6 +429,13 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   assign("...future.x_ii", 42, envir = globals_envir, inherits = FALSE)
   add <- c(add, "...future.x_ii")
 
+  if (isTRUE(attr(expr, "patched"))) {
+    if (debug) mdebug(" - flexFitR patch: rename global 'fn' to 'fn2'")
+    value <- globalsByName("fn", envir = envir)$fn
+    assign("fn2", value, envir = globals_envir, inherits = FALSE)
+    add <- c(add, "fn2")
+  }
+
   ignore <- attr(globals, "ignore", exact = TRUE)
   ignore <- c(ignore, argnames)
 
@@ -473,7 +483,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   }
 
   globals <- globals_mapreduce
-  
+
   if (debug) {
     mdebugf("  - globals: [%d] %s", length(globals),
            paste(sQuote(names(globals)), collapse = ", "))
@@ -514,7 +524,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     args_list_ii <- args_list[chunk]
     globals_ii[["...future.x_ii"]] <- args_list_ii
 
-    if (debug) mdebugf(" - Finding globals in 'args_list' chunk #%d ...", ii)
+    if (debug) mdebugf(" - Finding globals in 'args_list' for chunk #%d ...", ii)
     ## Search for globals in 'args_list_ii':
     gp <- getGlobalsAndPackages(args_list_ii, envir = envir, globals = TRUE)
     globals_X <- gp$globals
