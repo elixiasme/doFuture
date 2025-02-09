@@ -390,6 +390,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     dummy_globals <- bquote_apply(tmpl_dummy_globals)
   }
 
+  ## Apply temporary patches?
+  optional_patches <- patch_expressions()
+
   ## With or without RNG?
   if (is.null(seeds)) {
     seed_assignment <- NULL
@@ -853,6 +856,7 @@ tmpl_dummy_globals <- bquote_compile({
 
 
 tmpl_expr_with_rng <- bquote_compile({
+  .(optional_patches)
   lapply(seq_along(...future.x_ii), FUN = function(jj) {
     ...future.x_jj <- ...future.x_ii[[jj]]  #nolint
     .(dummy_globals)
