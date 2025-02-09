@@ -186,17 +186,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   debug <- getOption("doFuture.debug", FALSE)
   if (debug) mdebug("doFuture2() ...")
 
-  make_function <- function(argnames, body, envir = parent.frame()) {
-    FUN <- function() NULL
-    empty_formal <- alist(a =)
-    args <- rep(empty_formal, times = length(argnames))
-    names(args) <- argnames
-    attr(expr, "srcref") <- NULL
-    body(FUN) <- expr
-    formals(FUN) <- args
-    environment(FUN) <- envir
-    FUN
-  }
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## 1. Input from foreach
@@ -370,7 +359,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 2. Construct the 'FUN' function
+  ## 2. Construct future expression from %dofuture% expression
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## WORKAROUND: foreach::times() passes an empty string in 'argnames'
   argnames <- it$argnames
@@ -396,8 +385,13 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     dummy_globals <- bquote_apply(tmpl_dummy_globals)
   }
 
+  if (debug) {
+    mdebug("- %dofuture% R expression:")
+    mprint(expr)
+  }
+
   ## With or without RNG?
-  expr <- bquote_apply(
+  expr_rng <- bquote_apply(
     if (is.null(seeds)) {
       tmpl_expr
     } else {
@@ -408,17 +402,10 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   rm(list = "dummy_globals") ## Not needed anymore
 
   if (debug) {
-    mdebug("- R expression:")
-    mprint(expr)
+    mdebug("- R expression (adjusted for RNG):")
+    mprint(expr_rng)
   }
 
-  ## The iterator arguments in 'argnames' should be passed as regular
-  ## arguments to the 'FUN' function part of the future_lapply() call.
-  FUN <- make_function(argnames, body = expr, envir = envir)
-  if (debug) {
-    mprint(FUN)
-  }
-    
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## 3. Identify globals and packages
@@ -447,13 +434,23 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     attr(globals, "ignore") <- ignore
   }
 
-  mstr(globals)
-  gp <- getGlobalsAndPackages(expr, envir = globals_envir, globals = globals, packages = packages)
+  if (debug) {
+    mdebug("  - Argument 'globals':\n")
+    mstr(globals)
+    mdebug("  - R expression (searched for globals):")
+    mprint(expr_rng)
+  }
+  
+  gp <- getGlobalsAndPackages(expr_rng, envir = globals_envir, globals = globals, packages = packages)
   globals <- gp$globals
   packages <- unique(c(gp$packages, packages))
   expr <- gp$expr
   rm(list = c("gp", "globals_envir")) ## Not needed anymore
-  mstr(globals)
+  if (debug) {
+    mdebugf("  - globals: [%d] %s", length(globals),
+           paste(sQuote(names(globals)), collapse = ", "))
+    mstr(globals)
+  }
   
   ## Also make sure we've got our in-house '...future.x_ii' covered.
   stop_if_not("...future.x_ii" %in% names(globals),
@@ -466,11 +463,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   packages <- unique(c("doFuture", packages))
   
   if (debug) {
-    mdebug("  - R expression:")
-    mprint(expr)
-    mdebugf("  - globals: [%d] %s", length(globals),
-           paste(sQuote(names(globals)), collapse = ", "))
-    mstr(globals)
     mdebugf("  - packages: [%d] %s", length(packages),
            paste(sQuote(packages), collapse = ", "))
   
