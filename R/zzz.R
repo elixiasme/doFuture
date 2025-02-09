@@ -1,8 +1,19 @@
+future_has_evalFuture <- local({
+  res <- NULL
+  function() {
+    if (is.null(res)) {
+      ns <- getNamespace("future")
+      res <<- exists("evalFuture", mode = "function", envir = ns)
+    }
+    res
+  }
+})
+
 patch_expressions <- function() {
-  ## Temporary patches for future (> 1.34.0)
+  ## Temporary patches for future package with evalFuture()
   patches <- getOption("doFuture.patches")
   if (is.null(patches)) {
-    if (packageVersion("future") > "1.34.0") {
+    if (future_has_evalFuture()) {
       ## Package 'WARDEN'
       if ("WARDEN" %in% loadedNamespaces()) {
         patches <- c(patches, "WARDEN")
@@ -41,7 +52,7 @@ patch_expressions <- function() {
   if (is.null(value)) {
     value <- Sys.getenv("R_DOFUTURE_GLOBALS_SCANVANILLAEXPRESSION", NA_character_)
     if (is.na(value)) {
-      value <- (packageVersion("future") > "1.34.0")
+      value <- future_has_evalFuture()
     } else {
       value <- trim(value)
       value <- suppressWarnings(as.logical(value))

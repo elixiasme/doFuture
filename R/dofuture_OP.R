@@ -8,7 +8,7 @@
 #' @return The value of the foreach call.
 #'
 #' @details
-#' This is a replacement for [`%dopar%`] of the \pkg{foreach} package
+#' This is a replacement for `%dopar%` of the \pkg{foreach} package
 #' that leverages the \pkg{future} framework.
 #'
 #' When using `%dofuture%`:
@@ -452,8 +452,8 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
   ## Search also %dofuture% expression alone, to pick up things
   ## like a <- a + 1, where 'a' is a global
-  ## This was added to make future (> 1.34.0) backward compatible
-  ## with future (<= 1.34.0) /HB 2025-02-08
+  ## This was added to make future with evalFuture() backward compatible
+  ## with previous versions of the 'future' package /HB 2025-02-08
   if (getOption("doFuture.globals.scanVanillaExpression", TRUE)) {
     if (debug) {
       mdebug("  - R expression (%dofuture% expression searched for globals):")

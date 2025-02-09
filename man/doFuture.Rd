@@ -7,7 +7,7 @@
 \title{doFuture: Foreach Parallel Adapter using Futures}
 \description{
 The \pkg{doFuture} package provides mechanisms for using the
-\strong{\link{foreach}} package together with the \strong{\link{future}} package
+\pkg{foreach} package together with the \pkg{future} package
 such that \code{foreach()} parallelizes via \emph{any} future backend.
 }
 \section{Usage}{
