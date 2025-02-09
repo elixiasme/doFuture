@@ -45,7 +45,11 @@ for (strategy in strategies) {
   }
   y <- tryCatch(sub(x, 2:3), error = identity)
   str(y)
-  stopifnot(inherits(y, "simpleError"))
+  if (packageVersion("future") <= "1.34.0") {
+    stopifnot((strategy %in% c(c("cluster", "multisession")) && inherits(y, "simpleError")) || identical(y, y_truth))
+  } else {
+    stopifnot(inherits(y, "simpleError"))
+  }
 
   # Shutdown current plan
   plan(sequential)
