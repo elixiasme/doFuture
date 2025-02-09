@@ -13,6 +13,7 @@ patch_expressions <- function() {
   ## Temporary patches for future package with evalFuture()
   patches <- getOption("doFuture.patches")
   if (is.null(patches)) {
+    patches <- NA_character_
     if (future_has_evalFuture()) {
       ## Package 'WARDEN'
       if ("WARDEN" %in% loadedNamespaces()) {
