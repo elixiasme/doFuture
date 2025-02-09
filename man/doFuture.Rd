@@ -7,18 +7,41 @@
 \title{doFuture: Foreach Parallel Adapter using Futures}
 \description{
 The \pkg{doFuture} package provides mechanisms for using the
-\strong{\link{foreach}} package together with the \strong{\link{future}} package
+\pkg{foreach} package together with the \pkg{future} package
 such that \code{foreach()} parallelizes via \emph{any} future backend.
 }
 \section{Usage}{
 
 There are two alternative ways to use this package:
 \enumerate{
-\item \code{y <- foreach(...) \%dopar\% { ... }} with \code{registerDoFuture()}
 \item \code{y <- foreach(...) \%dofuture\% { ... }}
+\item \code{y <- foreach(...) \%dopar\% { ... }} with \code{registerDoFuture()}
 }
 
-The \emph{first alternative} is based on the traditional \strong{foreach}
+The \emph{first alternative} (recommended), which uses \code{\link{\%dofuture\%}}, avoids
+having to use \code{registerDoFuture()}.  The \code{\link{\%dofuture\%}} operator provides
+a more consistent behavior than \verb{\%dopar\%}, e.g. there is a unique set of
+foreach arguments instead of one per possible adapter.  Identification
+of globals, random number generation (RNG), and error handling is
+handled by the future ecosystem, just like with other map-reduce
+solutions such as \strong{\href{https://cran.r-project.org/package=future.apply}{future.apply}} and \strong{\href{https://cran.r-project.org/package=furrr}{furrr}}.
+An example is:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(doFuture)
+plan(multisession)
+
+y <- foreach(x = 1:4, y = 1:10) \%dofuture\% \{
+  z <- x + y
+  slow_sqrt(z)
+\}
+}\if{html}{\out{</div>}}
+
+This alternative is the recommended way to let \code{foreach()} parallelize
+via the future framework if you start out from scratch.
+
+See \code{\link{\%dofuture\%}} for more details and examples on this approach.
+
+The \emph{second alternative} is based on the traditional \strong{foreach}
 approach where one registers a foreach adapter to be used by \verb{\%dopar\%}.
 A popular adapter is \code{doParallel::registerDoParallel()}, which
 parallelizes on the local machine using the \strong{parallel} package.
@@ -48,28 +71,18 @@ and any package that rely on it, to parallelize via the future
 framework.
 
 See \code{\link[=registerDoFuture]{registerDoFuture()}} for more details and examples on this approach.
-
-The \emph{second alternative}, which uses \code{\link{\%dofuture\%}}, avoids having to use
-\code{registerDoFuture()}.  The \code{\link{\%dofuture\%}} operator provides a more
-consistent behavior than \verb{\%dopar\%}, e.g. there is a unique set of
-foreach arguments instead of one per possible adapter.  Identification
-of globals, random number generation (RNG), and error handling is
-handled by the future ecosystem, just like with other map-reduce
-solutions such as \strong{\href{https://cran.r-project.org/package=future.apply}{future.apply}} and \strong{\href{https://cran.r-project.org/package=furrr}{furrr}}.
-An example is:
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(doFuture)
-plan(multisession)
-
-y <- foreach(x = 1:4, y = 1:10) \%dofuture\% \{
-  z <- x + y
-  slow_sqrt(z)
-\}
-}\if{html}{\out{</div>}}
-
-This alternative is the recommended way to let \code{foreach()} parallelize
-via the future framework if you start out from scratch.
-
-See \code{\link{\%dofuture\%}} for more details and examples on this approach.
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://doFuture.futureverse.org}
+  \item \url{https://github.com/futureverse/doFuture}
+  \item Report bugs at \url{https://github.com/futureverse/doFuture/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Henrik Bengtsson \email{henrikb@braju.com} (\href{https://orcid.org/0000-0002-7579-5165}{ORCID}) [copyright holder]
+
+}

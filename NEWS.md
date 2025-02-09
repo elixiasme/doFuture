@@ -1,5 +1,13 @@
 # Version (development version)
 
+## Miscellaneous
+
+ * Prepare for upcoming changes in the **future** package affecting
+   how globals are identified by **doFuture**.
+ 
+
+# Version 1.0.1 (2023-12-19)
+
 ## Bug Fixes
 
  * Using `.options.future = list(conditions = NULL)` would be ignored

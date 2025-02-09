@@ -1,7 +1,7 @@
 
 
 <div id="badges"><!-- pkgdown markup -->
-<a href="https://CRAN.R-project.org/web/checks/check_results_doFuture.html"><img border="0" src="https://www.r-pkg.org/badges/version/doFuture" alt="CRAN check status"/></a> <a href="https://github.com/HenrikBengtsson/doFuture/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/HenrikBengtsson/doFuture/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>     <a href="https://app.codecov.io/gh/HenrikBengtsson/doFuture"><img border="0" src="https://codecov.io/gh/HenrikBengtsson/doFuture/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
+<a href="https://CRAN.R-project.org/web/checks/check_results_doFuture.html"><img border="0" src="https://www.r-pkg.org/badges/version/doFuture" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/doFuture/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/doFuture/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>     <a href="https://app.codecov.io/gh/futureverse/doFuture"><img border="0" src="https://codecov.io/gh/futureverse/doFuture/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
 
 # doFuture: Use Foreach to Parallelize via the Future Framework 
@@ -31,20 +31,49 @@ in parallel.
 The **[doFuture]** package provides two alternatives for using futures
 with **foreach**:
 
- 1. `registerDoFuture()` + `y <- foreach(...) %dopar% { ... }`.
+ 1. `y <- foreach(...) %dofuture% { ... }`
+
+ 2. `registerDoFuture()` + `y <- foreach(...) %dopar% { ... }`.
  
- 2. `y <- foreach(...) %dofuture% { ... }`
 
 
-### Alternative 1: `registerDoFuture()` + `%dopar%`
+### Alternative 1: `%dofuture%`
 
-The _first alternative_ is based on the traditional **foreach**
-approach where one registers a foreach adapter to be used by `%dopar%`.
-A popular adapter is `doParallel::registerDoParallel()`, which
-parallelizes on the local machine using the **parallel** package.
-This package provides `registerDoFuture()`, which parallelizes using
-the **future** package, meaning any future-compliant parallel backend
-can be used.
+The _first alternative_ (recommended), which uses `%dofuture%`, avoids
+having to use `registerDoFuture()`.  The `%dofuture%` operator
+provides a more consistent behavior than `%dopar%`, e.g. there is a
+unique set of foreach arguments instead of one per possible adapter.
+Identification of globals, random number generation (RNG), and error
+handling is handled by the future ecosystem, just like with other
+map-reduce solutions such as **[future.apply]** and **[furrr]**.  An
+example is:
+
+```r
+library(doFuture)
+plan(multisession)
+
+y <- foreach(x = 1:4, y = 1:10) %dofuture% {
+  z <- x + y
+  slow_sqrt(z)
+}
+```
+
+This alternative is the recommended way to let `foreach()` parallelize
+via the future framework, especially if you start out from scratch.
+
+See `help("%dofuture%", package = "doFuture")` for more details and
+examples on this approach.
+
+
+### Alternative 2: `registerDoFuture()` + `%dopar%`
+
+The _second alternative_ is based on the traditional **foreach**
+approach where one registers a foreach adapter to be used by
+`%dopar%`.  A popular adapter is `doParallel::registerDoParallel()`,
+which parallelizes on the local machine using the **parallel**
+package.  This package provides `registerDoFuture()`, which
+parallelizes using the **future** package, meaning any
+future-compliant parallel backend can be used.
 
 An example is:
 
@@ -73,33 +102,6 @@ See `help("registerDoFuture", package = "doFuture")` for more details
 and examples on this approach.
 
 
-### Alternative 2: `%dofuture%`
-
-The _second alternative_, which uses `%dofuture%`, avoids having to use
-`registerDoFuture()`.  The `%dofuture%` operator provides a more
-consistent behavior than `%dopar%`, e.g. there is a unique set of
-foreach arguments instead of one per possible adapter.  Identification
-of globals, random number generation (RNG), and error handling is
-handled by the future ecosystem, just like with other map-reduce
-solutions such as **[future.apply]** and **[furrr]**.
-An example is:
-
-```r
-library(doFuture)
-plan(multisession)
-
-y <- foreach(x = 1:4, y = 1:10) %dofuture% {
-  z <- x + y
-  slow_sqrt(z)
-}
-```
-
-This alternative is the recommended way to let `foreach()` parallelize
-via the future framework if you start out from scratch.
-
-See `help("%dofuture%", package = "doFuture")` for more details and
-examples on this approach.
-
 
 [doFuture]: https://doFuture.futureverse.org
 [future]: https://future.futureverse.org
@@ -125,7 +127,7 @@ install.packages("doFuture")
 
 To install the pre-release version that is available in Git branch `develop` on GitHub, use:
 ```r
-remotes::install_github("HenrikBengtsson/doFuture", ref="develop")
+remotes::install_github("futureverse/doFuture", ref="develop")
 ```
 This will install the package from source.  
 
