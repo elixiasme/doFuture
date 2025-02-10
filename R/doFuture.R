@@ -11,8 +11,8 @@ doFuture <- local({
   })
 
   tmpl_expr <- bquote_compile({
-    "# doFuture():::doFuture(): Make sure that foreach uses 'doFuture'
-    "# also in nested calls"
+    "# doFuture():::doFuture(): Make sure that foreach uses 'doFuture'"
+    "# also in nested calls                                           "
     doFuture::registerDoFuture()
 
     "# doFuture():::doFuture(): process chunk of elements"
