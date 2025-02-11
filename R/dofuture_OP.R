@@ -165,7 +165,7 @@
 #'
 #' @export
 `%dofuture%` <- function(foreach, expr) {
-  stopifnot(inherits(foreach, "foreach"))
+  stop_if_not(inherits(foreach, "foreach"))
   expr <- substitute(expr)
   doFuture2(foreach, expr, envir = parent.frame(), data = NULL)
 }
