@@ -19,10 +19,6 @@ patch_expressions <- function() {
       if ("WARDEN" %in% loadedNamespaces()) {
         patches <- c(patches, "WARDEN")
       }
-      ## Package 'flexFitR'
-      if ("flexFitR" %in% loadedNamespaces()) {
-        patches <- c(patches, "flexFitR")
-      }
     }
     options(doFuture.patches = patches)
   }
@@ -39,41 +35,6 @@ patch_expressions <- function() {
 
   optional_patches
 }
-
-
-flexFitR_tweak_modeler_expr <- function(expr) {
-  if (!is.call(expr)) return(expr)
-  expr <- unclass(expr)
-  op <- expr[[1]]
-  if (!is.symbol(op)) return(expr)
-  if (length(expr) != 3L) return(expr)
-  e <- expr[[3]]
-  if (length(e) != 10L) return(expr)
-  op <- e[[1]]
-  if (!is.symbol(op)) return(expr)
-  if (as.character(op) != ".fitter_curve") return(expr)
-  op <- e[[4]]
-  if (!is.symbol(op)) return(expr)
-  if (as.character(op) != "fn") return(expr)
-  e[[4]] <- as.symbol("fn2")
-  expr[[3]] <- e
-  attr(expr, "patched") <- TRUE
-  expr
-}
-
-flexFitR_patch <- local({
-  patch <- NULL
-  function(expr) {
-    if (is.null(patch)) {
-      patch_expressions()
-      patches <- getOption("doFuture.patches")
-      patch <<- ("flexFitR" %in% patches)
-    }
-    if (!patch) return(expr)
-    expr <- flexFitR_tweak_modeler_expr(expr)
-    expr
-  }
-})
 
 
 ## covr: skip=all
