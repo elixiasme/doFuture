@@ -1,3 +1,68 @@
+## From R.utils 2.7.0 (2018-08-26)
+queryRCmdCheck <- function(...) {
+  evidences <- list()
+
+  # Command line arguments
+  args <- commandArgs()
+
+  evidences[["vanilla"]] <- is.element("--vanilla", args)
+
+  # Check the working directory
+  pwd <- getwd()
+  dirname <- basename(pwd)
+  parent <- basename(dirname(pwd))
+  pattern <- ".+[.]Rcheck$"
+
+  # Is 'R CMD check' checking tests?
+  evidences[["tests"]] <- (
+    grepl(pattern, parent) && grepl("^tests(|_.*)$", dirname)
+  )
+
+  # Is the current working directory as expected?
+  evidences[["pwd"]] <- (evidences[["tests"]] || grepl(pattern, dirname))
+
+  # Is 'R CMD check' checking examples?
+  evidences[["examples"]] <- is.element("CheckExEnv", search())
+  
+  # SPECIAL: win-builder?
+  evidences[["win-builder"]] <- (.Platform$OS.type == "windows" && grepl("Rterm[.]exe$", args[1]))
+
+  if (evidences[["win-builder"]]) {
+    n <- length(args)
+    if (all(c("--no-save", "--no-restore", "--no-site-file", "--no-init-file") %in% args)) {
+      evidences[["vanilla"]] <- TRUE
+    }
+
+    if (grepl(pattern, parent)) {
+      evidences[["pwd"]] <- TRUE
+    }
+  }
+
+  if (!evidences$vanilla || !evidences$pwd) {
+    res <- "notRunning"
+  } else if (evidences$tests) {
+    res <- "checkingTests"
+  } else if (evidences$examples) {
+    res <- "checkingExamples"
+  } else {
+    res <- "notRunning"
+  }
+
+  attr(res, "evidences") <- evidences
+  
+  res
+}
+
+inRCmdCheck <- local({
+  .cache <- NULL
+  function() {
+    if (is.null(.cache)) {
+      .cache <<- (queryRCmdCheck() != "notRunning")
+    }
+    .cache
+  }
+})
+
 future_has_evalFuture <- local({
   res <- NULL
   function() {
@@ -15,8 +80,8 @@ patch_expressions <- function() {
   if (is.null(patches)) {
     patches <- NA_character_
     if (future_has_evalFuture()) {
-      ## Package 'WARDEN'
-      if ("WARDEN" %in% loadedNamespaces()) {
+      ## Package 'WARDEN', if 'R CMD check' is running
+      if ("WARDEN" %in% loadedNamespaces() && inRCmdCheck()) {
         patches <- c(patches, "WARDEN")
       }
     }
