@@ -16,10 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-#          - {os: windows-latest, r: 'devel'    }
+          - {os: windows-latest, r: 'devel'    }
           - {os: windows-latest, r: 'release'  }
           - {os: windows-latest, r: 'oldrel'   }
-          - {os: macOS-latest,   r: 'devel'    }
+#          - {os: macOS-latest,   r: 'devel'    }
           - {os: macOS-latest,   r: 'release'  }
           - {os: macOS-latest,   r: 'oldrel'   }
 #          - {os: ubuntu-latest,  r: 'devel'    }
@@ -30,6 +30,7 @@ jobs:
           - {os: ubuntu-latest,  r: '3.6'      }
           - {os: ubuntu-latest,  r: 'release'  , plan: multicore,    label: 'w/ multicore'    }
           - {os: ubuntu-latest,  r: 'release'  , plan: multisession, label: 'w/ multisession' }
+          - {os: ubuntu-latest,  r: 'release', future_version: develop, label: 'w/ future-develop' }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -37,8 +38,6 @@ jobs:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       ## R CMD check
       _R_CHECK_CRAN_INCOMING_: false
-      _R_CHECK_LENGTH_1_CONDITION_: true
-      _R_CHECK_LENGTH_1_LOGIC2_: true
       _R_CHECK_MATRIX_DATA_: true
       _R_CHECK_SUGGESTS_ONLY_: true
       _R_CHECK_THINGS_IN_TEMP_DIR_: true
@@ -49,6 +48,7 @@ jobs:
       R_FUTURE_PLAN: ${{ matrix.config.plan }}
       ## FIXME: Eventually update to 'R_FUTURE_GLOBALS_ONREFERENCE=error'
       R_FUTURE_GLOBALS_ONREFERENCE: "warning"
+      R_FUTURE_VERSION: ${{ matrix.config.future_version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +70,15 @@ jobs:
         run: |
           install.packages(".", repos = NULL, type = "source")  ## needed by parallel workers
           lapply(c("future.batchtools", "future.callr"), FUN = function(pkg) if (grepl(pkg, "${{ matrix.config.future_plan }}")) install.packages(pkg))
+        shell: Rscript {0}
+
+      - name: Test with specific future version?
+        run: |
+          future_version <- Sys.getenv("R_FUTURE_VERSION")
+          if (nzchar(future_version)) {
+            install.packages("remotes")
+            remotes::install_github("futureverse/future", ref=future_version)
+          }
         shell: Rscript {0}
 
       - name: Session info
@@ -109,7 +118,7 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
