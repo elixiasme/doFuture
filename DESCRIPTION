@@ -1,5 +1,5 @@
 Package: doFuture
-Version: 1.0.1-9013
+Version: 1.0.2
 Title: Use Foreach to Parallelize via the Future Framework
 Depends:
     foreach (>= 1.5.0),
@@ -25,5 +25,6 @@ License: LGPL (>= 2.1)
 LazyLoad: TRUE
 URL: https://doFuture.futureverse.org, https://github.com/futureverse/doFuture
 BugReports: https://github.com/futureverse/doFuture/issues
+Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
