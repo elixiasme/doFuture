@@ -1,5 +1,3 @@
-
-
 <div id="badges"><!-- pkgdown markup -->
 <a href="https://CRAN.R-project.org/web/checks/check_results_doFuture.html"><img border="0" src="https://www.r-pkg.org/badges/version/doFuture" alt="CRAN check status"/></a> <a href="https://github.com/futureverse/doFuture/actions?query=workflow%3AR-CMD-check"><img border="0" src="https://github.com/futureverse/doFuture/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop" alt="R CMD check status"/></a>     <a href="https://app.codecov.io/gh/futureverse/doFuture"><img border="0" src="https://codecov.io/gh/futureverse/doFuture/branch/develop/graph/badge.svg" alt="Coverage Status"/></a> 
 </div>
@@ -137,4 +135,3 @@ This will install the package from source.
 ## Contributing
 
 To contribute to this package, please see [CONTRIBUTING.md](CONTRIBUTING.md).
-
