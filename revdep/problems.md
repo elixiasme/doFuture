@@ -38,9 +38,9 @@ Run `revdepcheck::revdep_details(, "bsitar")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  7.7Mb
+      installed size is  7.9Mb
       sub-directories of 1Mb or more:
-        R      1.3Mb
+        R      1.5Mb
         data   5.3Mb
     ```
 
@@ -104,10 +104,10 @@ Run `revdepcheck::revdep_details(, "envi")` for more info
 
 <details>
 
-* Version: 0.2.5
+* Version: 0.2.8
 * GitHub: https://github.com/emilioluissaenzguillen/GeDS
 * Source code: https://github.com/cran/GeDS
-* Date/Publication: 2025-01-21 16:30:02 UTC
+* Date/Publication: 2025-03-14 10:10:02 UTC
 * Number of recursive dependencies: 46
 
 Run `revdepcheck::revdep_details(, "GeDS")` for more info
@@ -200,8 +200,9 @@ Run `revdepcheck::revdep_details(, "ISAnalytics")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  7.5Mb
+      installed size is  7.8Mb
       sub-directories of 1Mb or more:
+        R      1.0Mb
         data   1.4Mb
         doc    3.8Mb
     ```
@@ -399,7 +400,7 @@ Run `revdepcheck::revdep_details(, "multilevelcoda")` for more info
 * GitHub: https://github.com/lhe17/nebula
 * Source code: https://github.com/cran/nebula
 * Date/Publication: 2024-02-15 23:00:02 UTC
-* Number of recursive dependencies: 173
+* Number of recursive dependencies: 172
 
 Run `revdepcheck::revdep_details(, "nebula")` for more info
 
@@ -472,15 +473,15 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
     > 
     > df_genes <- data.frame(
     ...
-       │     └─ openssl >=1.1.1q,<1.1.2a , which conflicts with any installable versions previously reported;
-       ├─ tensorflow 2.10.0 would require
-       │  └─ tensorflow-base [2.10.0 eigen_py38h1969d1f_0|2.10.0 gpu_py38h6559e04_0|2.10.0 mkl_py38hb9daa73_0], which requires
-       │     └─ python >=3.8,<3.9.0a0 , which conflicts with any installable versions previously reported;
-       └─ tensorflow 2.10.0 would require
-          └─ tensorflow-base [2.10.0 eigen_py39h1969d1f_0|2.10.0 gpu_py39h6559e04_0|2.10.0 mkl_py39hb9daa73_0], which requires
-             └─ python >=3.9,<3.10.0a0 , which conflicts with any installable versions previously reported.
-    
-    Error: one or more Python packages failed to install [error code 1]
+    + )
+    > fit <- pareg(df_genes, df_terms, max_iterations = 10)
+    Error in py_module_import(module, convert = convert) : 
+      ModuleNotFoundError: No module named 'tensorflow'
+    Run `reticulate::py_last_error()` for details.
+    Error in .activate_fallback(proc, testload, env = env, envpath = envpath,  : 
+      ModuleNotFoundError: No module named 'tensorflow'
+    Run `reticulate::py_last_error()` for details.
+    Calls: pareg -> basiliskStart -> .activate_fallback
     Execution halted
     ```
 
@@ -489,38 +490,38 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
       Running ‘testthat.R’
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
-    Last 50 lines of output:
+    Complete output:
+      > library(testthat)
+      > library(pareg)
+      Loading required package: tensorflow
+      Loading required package: tfprobability
       
       
-      Preparing transaction: ...working... done
-      Verifying transaction: ...working... done
-      Executing transaction: ...working... done
-      + /c4/home/henrik/.cache/R/basilisk/1.18.0/0/bin/conda install --yes --prefix /c4/home/henrik/.cache/R/basilisk/1.18.0/pareg/1.8.0/pareg 'python=3.10.14' -c anaconda --override-channels
     ...
-            └─ tensorflow-base [2.10.0 eigen_py39h1969d1f_0|2.10.0 gpu_py39h6559e04_0|2.10.0 mkl_py39hb9daa73_0], which requires
-               └─ python >=3.9,<3.10.0a0 , which conflicts with any installable versions previously reported.
-      
-      Error: one or more Python packages failed to install [error code 1]
-      In addition: Warning messages:
-      1: In check_forbidden_install("Python packages") :
-        cannot install Python packages during R CMD check
-      2: In check_forbidden_install("Conda Environments") :
-        cannot install Conda Environments during R CMD check
+      +   testload = c("tensorflow", "tensorflow_probability")
+      + )
+      Error in py_module_import(module, convert = convert) : 
+        ModuleNotFoundError: No module named 'tensorflow'
+      Run `reticulate::py_last_error()` for details.
+      Error in .activate_fallback(proc, testload, env = env, envpath = envpath,  : 
+        ModuleNotFoundError: No module named 'tensorflow'
+      Run `reticulate::py_last_error()` for details.
+      Calls: <Anonymous> -> .activate_fallback
       Execution halted
     ```
 
 *   checking re-building of vignette outputs ... ERROR
     ```
     Error(s) in re-building vignettes:
+      ...
     --- re-building ‘pareg.Rmd’ using rmarkdown
     The magick package is required to crop "/c4/home/henrik/futureverse/doFuture/revdep/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-4-1.png" but not available.
     The magick package is required to crop "/c4/home/henrik/futureverse/doFuture/revdep/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-5-1.png" but not available.
-    Channels:
-     - anaconda
-    Platform: linux-64
-    Collecting package metadata (repodata.json): ...working... done
-    Solving environment: ...working... done
     
+    Quitting from lines 145-150 [unnamed-chunk-9] (pareg.Rmd)
+    Error: processing vignette 'pareg.Rmd' failed with diagnostics:
+    ModuleNotFoundError: No module named 'tensorflow'
+    Run `reticulate::py_last_error()` for details.
     ...
     --- re-building ‘pathway_similarities.Rmd’ using rmarkdown
     The magick package is required to crop "/c4/home/henrik/futureverse/doFuture/revdep/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pathway_similarities_files/figure-html/unnamed-chunk-2-1.png" but not available.
@@ -584,11 +585,33 @@ Run `revdepcheck::revdep_details(, "pliman")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.9Mb
+      installed size is  8.6Mb
       sub-directories of 1Mb or more:
-        R            1.0Mb
         libs         5.3Mb
         tmp_images   1.9Mb
+    ```
+
+# polykde
+
+<details>
+
+* Version: 1.0.0
+* GitHub: https://github.com/egarpor/polykde
+* Source code: https://github.com/cran/polykde
+* Date/Publication: 2025-02-17 11:00:01 UTC
+* Number of recursive dependencies: 171
+
+Run `revdepcheck::revdep_details(, "polykde")` for more info
+
+</details>
+
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is 11.0Mb
+      sub-directories of 1Mb or more:
+        libs  10.7Mb
     ```
 
 # projpred
@@ -683,7 +706,7 @@ Run `revdepcheck::revdep_details(, "skpr")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 59.7Mb
+      installed size is 59.6Mb
       sub-directories of 1Mb or more:
         libs  59.0Mb
     ```
@@ -805,10 +828,10 @@ Run `revdepcheck::revdep_details(, "sRACIPE")` for more info
 
 <details>
 
-* Version: 2.2.0
+* Version: 2.3.0
 * GitHub: https://github.com/bcgov/ssdtools
 * Source code: https://github.com/cran/ssdtools
-* Date/Publication: 2025-01-14 19:10:02 UTC
+* Date/Publication: 2025-02-20 13:20:02 UTC
 * Number of recursive dependencies: 127
 
 Run `revdepcheck::revdep_details(, "ssdtools")` for more info
@@ -819,7 +842,7 @@ Run `revdepcheck::revdep_details(, "ssdtools")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 38.4Mb
+      installed size is 38.5Mb
       sub-directories of 1Mb or more:
         libs  37.3Mb
     ```
@@ -911,9 +934,9 @@ Run `revdepcheck::revdep_details(, "updog")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.9Mb
+      installed size is  9.4Mb
       sub-directories of 1Mb or more:
-        libs   8.0Mb
+        libs   8.5Mb
     ```
 
 # vmeasur
