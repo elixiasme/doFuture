@@ -3,11 +3,11 @@ url: https://doFuture.futureverse.org
 home:
   links:
   - text: Roadmap/Milestones
-    href: https://github.com/HenrikBengtsson/doFuture/milestones
+    href: https://github.com/futureverse/doFuture/milestones
   - text: The Futureverse Project
     href: https://www.futureverse.org/
   - text: Futureverse User Forum
-    href: https://github.com/HenrikBengtsson/future/discussions
+    href: https://github.com/futureverse/future/discussions
 
 navbar:
   structure:
