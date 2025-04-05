@@ -74,33 +74,6 @@ future_has_evalFuture <- local({
   }
 })
 
-patch_expressions <- function() {
-  ## Temporary patches for future package with evalFuture()
-  patches <- getOption("doFuture.patches")
-  if (is.null(patches)) {
-    patches <- NA_character_
-    if (future_has_evalFuture()) {
-      ## Package 'WARDEN', if 'R CMD check' is running
-      if ("WARDEN" %in% loadedNamespaces() && inRCmdCheck()) {
-        patches <- c(patches, "WARDEN")
-      }
-    }
-    options(doFuture.patches = patches)
-  }
-
-  optional_patches <- NULL
-  if (!is.null(patches)) {
-    if ("WARDEN" %in% patches) {
-      optional_patches <- bquote({
-       .(optional_patches)
-       T <- TRUE
-      })
-    }
-  }
-
-  optional_patches
-}
-
 
 ## covr: skip=all
 .onLoad <- function(libname, pkgname) {
@@ -124,17 +97,5 @@ patch_expressions <- function() {
       value <- isTRUE(value)
     }
     options(doFuture.globals.scanVanillaExpression = value)
-  }
-
-  ## doFuture 1.1.0
-  value <- getOption("doFuture.patches")
-  if (is.null(value)) {
-    value <- Sys.getenv("R_DOFUTURE_PATCHES", NA_character_)
-    if (is.na(value) || !nzchar(value)) {
-      value <- NULL
-    } else {
-      value <- strsplit(value, split = ",", fixed = TRUE)[[1]]
-    }
-    options(doFuture.patches = value)
   }
 }
