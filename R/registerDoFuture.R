@@ -1,10 +1,5 @@
 #' Use the Foreach `%dopar%` Adapter with Futures
 #'
-#' @param flavor Control how the adapter should behave.
-#' If `"%dopar%"`, it behaves as a classical foreach adapter.
-#' If `"%dofuture%"`, it behaves as if `%dofuture%` would have
-#' been used instead of `%dopar%`.
-#' 
 #' The `registerDoFuture()` function makes the
 #' \code{\link[foreach:\%dopar\%]{\%dopar\%}} operator of the
 #' \pkg{foreach} package to process foreach iterations via any of
@@ -15,6 +10,11 @@
 #' and packages making using the \pkg{foreach} framework._
 #' Neither the developer nor the end user has to change any code.
 #'
+#' @param flavor Control how the adapter should behave.
+#' If `"%dopar%"`, it behaves as a classical foreach adapter.
+#' If `"%dofuture%"`, it behaves as if `%dofuture%` would have
+#' been used instead of `%dopar%`.
+#' 
 #' @section Parallel backends:
 #' To use futures with the \pkg{foreach} package and its
 #' \code{\link[foreach:\%dopar\%]{\%dopar\%}} operator, use

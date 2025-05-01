@@ -10,8 +10,13 @@ registerDoFuture(flavor = c("\%dopar\%", "\%dofuture\%"))
 \item{flavor}{Control how the adapter should behave.
 If \code{"\%dopar\%"}, it behaves as a classical foreach adapter.
 If \code{"\%dofuture\%"}, it behaves as if \verb{\%dofuture\%} would have
-been used instead of \verb{\%dopar\%}.
-
+been used instead of \verb{\%dopar\%}.}
+}
+\value{
+\code{registerDoFuture()} returns, invisibly, the previously registered
+foreach \verb{\%dopar\%} backend.
+}
+\description{
 The \code{registerDoFuture()} function makes the
 \code{\link[foreach:\%dopar\%]{\%dopar\%}} operator of the
 \pkg{foreach} package to process foreach iterations via any of
@@ -20,14 +25,7 @@ includes various parallel and distributed backends.
 In other words, \emph{if a computational backend is supported via
 the Future API, it'll be automatically available for all functions
 and packages making using the \pkg{foreach} framework.}
-Neither the developer nor the end user has to change any code.}
-}
-\value{
-\code{registerDoFuture()} returns, invisibly, the previously registered
-foreach \verb{\%dopar\%} backend.
-}
-\description{
-Use the Foreach \verb{\%dopar\%} Adapter with Futures
+Neither the developer nor the end user has to change any code.
 }
 \section{Parallel backends}{
 
