@@ -1,6 +1,19 @@
-# Version 1.0.2-9000 (2025-03-15)
+# Version 1.0.2-9001 (2025-04-30)
 
- * ...
+## New Features
+
+ * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
+  `%dopar%` infix operator behave as if `%dofuture%` would have been
+  used. This makes it possible for you to use `%dofuture%`, even if
+  you do not have the option to update the code that uses
+  `%dopar%`. For instance, if you use a package that uses
+  `foreach(...) %dopar% { ... }` internally, this flavor allows you to
+  effectively make that the same as `foreach(...) %dofuture% { ... }`.
+  This is particularly useful if you suspect that the code does not
+  account for random number generation (RNG), where it ideally should
+  use `%dorng%` of the **doRNG** package instead of `%dopar%`. Using
+  `%dofuture%` resolves such issues, because it will use a proper
+  parallel RNG set by the futureverse ecosystem.
 
 
 # Version 1.0.2 (2025-03-15)

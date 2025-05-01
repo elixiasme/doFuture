@@ -1,5 +1,10 @@
 #' Use the Foreach `%dopar%` Adapter with Futures
 #'
+#' @param flavor Control how the adapter should behave.
+#' If `"%dopar%"`, it behaves as a classical foreach adapter.
+#' If `"%dofuture%"`, it behaves as if `%dofuture%` would have
+#' been used instead of `%dopar%`.
+#' 
 #' The `registerDoFuture()` function makes the
 #' \code{\link[foreach:\%dopar\%]{\%dopar\%}} operator of the
 #' \pkg{foreach} package to process foreach iterations via any of
@@ -189,10 +194,22 @@
 #' @importFrom utils packageVersion
 #' @export
 #' @keywords utilities
-registerDoFuture <- function() {  #nolint
+registerDoFuture <- function(flavor = c("%dopar%", "%dofuture%")) {  #nolint
+  flavor <- match.arg(flavor, several.ok = FALSE)
+
+  if (flavor == "%dopar%") {
+    name <- "doFuture"
+    doFcn <- doFuture
+  } else if (flavor == "%dofuture%") {
+    name <- "doFuture2"
+    doFcn <- function(obj, expr, envir, data) {
+      doFuture2(obj, expr = expr, envir = envir, data = NULL)
+    }
+  }
+
   info <- function(data, item) {
     switch(item,
-      name = "doFuture",
+      name = name,
       version = packageVersion("doFuture"),
       workers = nbrOfWorkers(),
     )
@@ -217,7 +234,7 @@ registerDoFuture <- function() {  #nolint
   ## is supported. /HB 2020-12-28
   oldDoPar <- .getDoPar()
 
-  setDoPar(doFuture, info = info)
+  setDoPar(doFcn, info = info)
 
   invisible(oldDoPar)
 }
