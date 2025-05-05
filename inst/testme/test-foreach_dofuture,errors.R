@@ -101,6 +101,10 @@ for (strategy in strategies) {
     is.list(res),
     length(res) == 10L
   )
+
+  # Shutdown current plan
+  plan(sequential)
+
   message(sprintf("- plan('%s') ... DONE", strategy))
 } ## for (strategy ...)
 
@@ -125,6 +129,9 @@ for (strategy in strategies) {
     length(res) == 5L
   )
 
+  # Shutdown current plan
+  plan(sequential)
+  
   message(sprintf("- plan('%s') ... DONE", strategy))
 } ## for (strategy ...)
 
