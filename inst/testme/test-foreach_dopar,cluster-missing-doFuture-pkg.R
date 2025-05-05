@@ -59,7 +59,8 @@ cl <- NULL
 for (type in types) {
   message(sprintf("Test set #1 with cluster type %s ...", sQuote(type)))
 
-  cl <- setupClusterWithoutPkgs(type, withouts = c("future", "doFuture"))  
+  cl <- setupClusterWithoutPkgs(type, withouts = c("future", "doFuture"))
+  
   if (all(attr(cl, "withs")) && !all(attr(cl, "withouts"))) {
     plan(cluster, workers = cl, .init = FALSE)
     
@@ -75,11 +76,15 @@ for (type in types) {
     }, error = identity)
     print(res)
     stopifnot(inherits(res, "FutureError"))
+    
+    plan(sequential)
   }
+  
   stopCluster2(cl)
   cl <- NULL
   
   cl <- setupClusterWithoutPkgs(type)  
+
   if (all(attr(cl, "withs")) && !all(attr(cl, "withouts"))) {
     plan(cluster, workers = cl, .init = FALSE)
     
@@ -95,6 +100,8 @@ for (type in types) {
     }, error = identity)
     print(res)
     stopifnot(inherits(res, "FutureError"))
+    
+    plan(sequential)
   }
   stopCluster2(cl)
   cl <- NULL
