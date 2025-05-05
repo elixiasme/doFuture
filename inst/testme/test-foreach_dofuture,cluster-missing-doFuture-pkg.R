@@ -45,7 +45,16 @@ setupClusterWithoutPkgs <- function(type = "PSOCK",
   attr(cl, "withouts") <- res
 
   cl
-}
+} ## setupClusterWithoutPkgs()
+
+
+stopCluster2 <- function(cl) {
+  for (kk in seq_along(cl)) {
+    tryCatch(parallel::stopCluster(cl[kk]), error = TRUE)
+  }
+} ## stopCluster2()
+
+
 
 cl <- NULL
 for (type in types) {
@@ -68,7 +77,7 @@ for (type in types) {
     print(res)
     stopifnot(inherits(res, "FutureError"))
   }
-  parallel::stopCluster(cl)
+  stopCluster2(cl)
   cl <- NULL
   
   cl <- setupClusterWithoutPkgs(type)  
@@ -88,7 +97,7 @@ for (type in types) {
     print(res)
     stopifnot(inherits(res, "FutureError"))
   }
-  parallel::stopCluster(cl)
+  stopCluster2(cl)
   cl <- NULL
   
   plan(sequential)
