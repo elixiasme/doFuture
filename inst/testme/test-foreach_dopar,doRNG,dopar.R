@@ -1,6 +1,7 @@
 #' @tags %dopar%
 #' @tags %dorng%
 #' @tags rng doRNG
+#' @tags detritus-files
 #' @tags sequential multisession cluster multicore
 
 library(doFuture)
