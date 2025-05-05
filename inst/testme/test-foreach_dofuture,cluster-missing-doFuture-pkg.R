@@ -1,4 +1,5 @@
 #' @tags %dofuture%
+#' @tags detritus-files
 #' @tags cluster fork
 
 library(doFuture)

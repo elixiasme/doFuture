@@ -1,4 +1,5 @@
 #' @tags %dopar%
+#' @tags detritus-files
 #' @tags sequential cluster
 
 library(doFuture)
