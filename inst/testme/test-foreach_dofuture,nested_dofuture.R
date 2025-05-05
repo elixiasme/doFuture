@@ -1,3 +1,6 @@
+#' @tags %dofuture%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 ## WORKAROUND: To avoid `R CMD check --as-cran` on MS Windows triggering:
@@ -12,7 +15,6 @@ library(doFuture)
 if (.Platform$OS.type == "windows") Sys.setenv(TMPDIR = tempdir())
 
 strategies <- future:::supportedStrategies()
-strategies <- setdiff(strategies, "multiprocess")
 
 options(future.debug = FALSE)
 options(doFuture.debug = FALSE)

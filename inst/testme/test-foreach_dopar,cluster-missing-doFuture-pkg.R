@@ -1,3 +1,6 @@
+#' @tags %dopar%
+#' @tags sequential cluster
+
 library(doFuture)
 options(future.debug = FALSE)
 
@@ -9,7 +12,6 @@ message("Library paths: ", paste(sQuote(.libPaths()), collapse = ", "))
 message("Package path: ", sQuote(system.file(package = "future")))
 
 types <- "PSOCK"
-#if (supportsMulticore()) types <- c(types, "FORK")
 
 setupClusterWithoutPkgs <- function(type = "PSOCK",
                                     withs = c("digest", "globals",

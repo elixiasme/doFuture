@@ -1,3 +1,6 @@
+#' @tags %dofuture%
+#' @tags cluster fork
+
 library(doFuture)
 options(future.debug = FALSE)
 
@@ -94,4 +97,3 @@ for (type in types) {
 } ## for (type ...)
 
 message("*** cluster() ... DONE")
-

@@ -1,3 +1,6 @@
+#' @tags %dofuture%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 message("*** Options in nested parallelization ...")

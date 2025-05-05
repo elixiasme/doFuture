@@ -1,3 +1,7 @@
+#' @tags %dofuture%
+#' @tags %dopar%
+#' @tags multisession
+
 library(doFuture)
 
 options(future.debug = FALSE)
@@ -39,4 +43,3 @@ stopifnot(identical(y5, y_truth))
 plan(sequential)
 
 message("*** registerDoFuture(flavor = '%dofuture%') ... DONE")
-

@@ -1,3 +1,6 @@
+#' @tags %dopar%
+#' @tags multisession
+
 library(doFuture)
 
 options(future.debug = FALSE)

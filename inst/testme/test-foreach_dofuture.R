@@ -1,7 +1,9 @@
+#' @tags %dofuture%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 strategies <- future:::supportedStrategies()
-strategies <- setdiff(strategies, "multiprocess")
 
 message("*** doFuture - reproducibility ...")
 

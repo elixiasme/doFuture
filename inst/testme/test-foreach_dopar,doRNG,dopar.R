@@ -1,3 +1,8 @@
+#' @tags %dopar%
+#' @tags %dorng%
+#' @tags rng doRNG
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 strategies <- future:::supportedStrategies()

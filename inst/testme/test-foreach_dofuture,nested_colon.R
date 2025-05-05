@@ -1,7 +1,10 @@
+#' @tags %dofuture%
+#' @tags detritus-files
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 strategies <- future:::supportedStrategies()
-strategies <- setdiff(strategies, "multiprocess")
 
 message("*** doFuture - nested w/ %:% ...")
 

@@ -1,7 +1,10 @@
+#' @tags %dofuture%
+#' @tags %dopar%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 strategies <- future:::supportedStrategies()
-strategies <- setdiff(strategies, "multiprocess")
 
 message("*** doFuture() - error handling w/ .errorhandling in c('stop', 'remove', 'pass') ...")
 
@@ -140,4 +143,3 @@ stopifnot(
 )
 
 message("*** doFuture() - invalid accumulator ... DONE")
-

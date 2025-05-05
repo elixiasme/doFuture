@@ -1,3 +1,6 @@
+#' @tags %dopar%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 ## WORKAROUND: To avoid `R CMD check --as-cran` on MS Windows triggering:

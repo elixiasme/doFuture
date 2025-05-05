@@ -1,7 +1,9 @@
+#' @tags %dofuture%
+#' @tags sequential multisession cluster multicore
+
 library(doFuture)
 
 strategies <- future:::supportedStrategies()
-strategies <- setdiff(strategies, "multiprocess")
 
 message("*** doFuture - explicitly exported globals ...")
 
@@ -129,4 +131,3 @@ for (strategy in strategies) {
 } ## for (strategy ...)
 
 message("*** doFuture - automatically finding globals in 'args_list' ... DONE")
-
