@@ -50,7 +50,7 @@ setupClusterWithoutPkgs <- function(type = "PSOCK",
 
 stopCluster2 <- function(cl) {
   for (kk in seq_along(cl)) {
-    tryCatch(parallel::stopCluster(cl[kk]), error = TRUE)
+    tryCatch(parallel::stopCluster(cl[kk]), error = identity)
   }
 } ## stopCluster2()
 
