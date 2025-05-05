@@ -203,6 +203,7 @@ registerDoFuture <- function(flavor = c("%dopar%", "%dofuture%")) {  #nolint
   } else if (flavor == "%dofuture%") {
     name <- "doFuture2"
     doFcn <- function(obj, expr, envir, data) {
+      obj$useForeachArguments <- TRUE
       doFuture2(obj, expr = expr, envir = envir, data = NULL)
     }
   }
