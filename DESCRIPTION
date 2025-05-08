@@ -28,6 +28,7 @@ License: LGPL (>= 2.1)
 LazyLoad: TRUE
 URL: https://doFuture.futureverse.org, https://github.com/futureverse/doFuture
 BugReports: https://github.com/futureverse/doFuture/issues
+Language: en-US
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
