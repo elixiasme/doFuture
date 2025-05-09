@@ -219,13 +219,19 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     dummy_globals <- bquote_apply(tmpl_dummy_globals)
   }
 
+  ## With foreach error handling?
+  if (!is.null(errors) && errors != "future") {
+    if (debug) mdebugf("- use foreach error handling: %s", sQuote(errors))
+    expr <- bquote(tryCatch(.(expr), error = identity))
+  }
+
   ## With or without RNG?
   if (is.null(seeds)) {
     seed_assignment <- NULL
   } else {
     seed_assignment <- quote(assign(".Random.seed", ...future.seeds_ii[[jj]], envir = globalenv(), inherits = FALSE))
   }
-  expr_mapreduce <- bquote_apply(tmpl_expr_with_rng)
+  expr_mapreduce <- bquote_apply(tmpl_expr_with_or_without_rng)
   rm(list = c("dummy_globals", "seed_assignment")) ## Not needed anymore
 
   if (debug) {
@@ -426,11 +432,11 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   if (isFALSE(seed)) {
     withCallingHandlers({
       values <- local({
-          oopts <- options(future.rng.onMisuse.keepFuture = FALSE)
-          on.exit(options(oopts))
-          value(fs)
+        oopts <- options(future.rng.onMisuse.keepFuture = FALSE)
+        on.exit(options(oopts))
+        value(fs)
       })
-     }, RngFutureCondition = function(cond) {
+    }, RngFutureCondition = function(cond) {
       ## One of "our" futures?
       idx <- NULL
       
@@ -688,7 +694,7 @@ tmpl_dummy_globals <- bquote_compile({
 })
 
 
-tmpl_expr_with_rng <- bquote_compile({
+tmpl_expr_with_or_without_rng <- bquote_compile({
   "# doFuture():::doFuture2(): process chunk of elements"
   lapply(seq_along(...future.x_ii), FUN = function(jj) {
     ...future.x_jj <- ...future.x_ii[[jj]]  #nolint
@@ -700,8 +706,14 @@ tmpl_expr_with_rng <- bquote_compile({
                envir = ...future.env, inherits = FALSE)
       }
     })
+    .(if (!is.null(seed_assignment))
+    "# Parallel random-number generation"
+    )
     .(seed_assignment)
-    tryCatch(.(expr), error = identity)
+    ## Note, this tryCatch() hides errors from future::value(), which
+    ## is why it won't cancel all other futures  automatically
+    "# Evaluate the foreach expression"
+    .(expr)
   })
 })
 

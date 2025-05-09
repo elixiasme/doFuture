@@ -26,6 +26,9 @@ doFuture <- local({
                  envir = ...future.env, inherits = FALSE)
         }
       })
+      ## Note, this tryCatch() hides errors from future::value(), which
+      ## is why it won't cancel all other futures  automatically
+      "# Evaluate the foreach expression, while capturing errors"
       tryCatch(.(expr), error = identity)
     })
   })
