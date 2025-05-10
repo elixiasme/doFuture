@@ -51,6 +51,7 @@ jobs:
       R_FUTURE_PLAN: ${{ matrix.config.plan }}
       ## FIXME: Eventually update to 'R_FUTURE_GLOBALS_ONREFERENCE=error'
       R_FUTURE_GLOBALS_ONREFERENCE: "warning"
+      R_PARALLELLY_VERSION: ${{ matrix.config.parallelly_version }}
       R_GLOBALS_VERSION: ${{ matrix.config.globals_version }}
       R_FUTURE_VERSION: ${{ matrix.config.future_version }}
 
@@ -67,25 +68,24 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck any::remotes
           needs: check
 
       - name: Install package itself (special case)
         run: |
           install.packages(".", repos = NULL, type = "source")  ## needed by parallel workers
           lapply(c("future.batchtools", "future.callr"), FUN = function(pkg) if (grepl(pkg, "${{ matrix.config.future_plan }}")) install.packages(pkg))
+          remotes::install_github("futureverse/parallelly", ref="develop")
         shell: Rscript {0}
 
       - name: Test with specific future version?
         run: |
           globals_version <- Sys.getenv("R_GLOBALS_VERSION")
           if (nzchar(globals_version)) {
-            install.packages("remotes")
             remotes::install_github("futureverse/globals", ref=globals_version)
           }
           future_version <- Sys.getenv("R_FUTURE_VERSION")
           if (nzchar(future_version)) {
-            install.packages("remotes")
             remotes::install_github("futureverse/future", ref=future_version)
           }
         shell: Rscript {0}
