@@ -47,11 +47,7 @@ for (strategy in strategies) {
   }
   y <- tryCatch(sub(x, 2:3), error = identity)
   str(y)
-  if (doFuture:::future_has_evalFuture()) {
-    stopifnot(inherits(y, "simpleError"))
-  } else {
-    stopifnot((strategy %in% c(c("cluster", "multisession")) && inherits(y, "simpleError")) || identical(y, y_truth))
-  }
+  stopifnot(inherits(y, "simpleError"))
 
   # Shutdown current plan
   plan(sequential)

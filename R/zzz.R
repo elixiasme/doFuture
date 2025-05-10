@@ -63,17 +63,6 @@ inRCmdCheck <- local({
   }
 })
 
-future_has_evalFuture <- local({
-  res <- NULL
-  function() {
-    if (is.null(res)) {
-      ns <- getNamespace("future")
-      res <<- exists("evalFuture", mode = "function", envir = ns)
-    }
-    res
-  }
-})
-
 
 ## covr: skip=all
 .onLoad <- function(libname, pkgname) {
@@ -90,7 +79,7 @@ future_has_evalFuture <- local({
   if (is.null(value)) {
     value <- Sys.getenv("R_DOFUTURE_GLOBALS_SCANVANILLAEXPRESSION", NA_character_)
     if (is.na(value) || !nzchar(value)) {
-      value <- future_has_evalFuture()
+      value <- TRUE
     } else {
       value <- trim(value)
       value <- suppressWarnings(as.logical(value))
