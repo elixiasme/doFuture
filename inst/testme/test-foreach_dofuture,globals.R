@@ -2,8 +2,11 @@
 #' @tags sequential multisession cluster multicore
 
 library(doFuture)
-options(future.debug = TRUE)
-options(doFuture.debug = TRUE)
+options(
+  parallelly.debug = TRUE,
+  future.debug = TRUE,
+  doFuture.debug = TRUE
+)
 
 strategies <- future:::supportedStrategies()
 
