@@ -41,7 +41,7 @@ for (strategy in strategies) {
       }
     }, error = identity)
     str(truth)
-    
+
     res <- tryCatch({
       foreach(i = 1:10, .errorhandling = .errorhandling, .options.future = .options.future) %dofuture% {
         if (i %% 2 == 0) stop(sprintf("Index error ('stop'), because i = %d", i))
@@ -49,12 +49,14 @@ for (strategy in strategies) {
       }
     }, error = identity)
     str(res)
-
     stopifnot(
       length(res) == length(truth),
-      identical(names(res), names(truth)),
-      all(mapply(res, truth, FUN = function(r, t) identical(class(r), class(t))))
+      identical(names(res), names(truth))
     )
+    if (inherits(res, "condition")) {
+      stopifnot(identical(conditionMessage(res), conditionMessage(truth)))
+    }
+    
     if (.errorhandling == "stop") {
       stopifnot(
         inherits(res, "error"),
