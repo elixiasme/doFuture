@@ -66,6 +66,8 @@ inRCmdCheck <- local({
 
 ## covr: skip=all
 .onLoad <- function(libname, pkgname) {
+  import_future_functions()
+
   value <- getOption("doFuture.workarounds")
   if (is.null(value)) {
     value <- trim(Sys.getenv("R_DOFUTURE_WORKAROUNDS"))

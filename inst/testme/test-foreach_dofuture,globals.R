@@ -2,6 +2,8 @@
 #' @tags sequential multisession cluster multicore
 
 library(doFuture)
+options(future.debug = TRUE)
+options(doFuture.debug = TRUE)
 
 strategies <- future:::supportedStrategies()
 
@@ -90,6 +92,7 @@ for (strategy in strategies) {
   message(sprintf("- plan('%s') ... DONE", strategy))
 } ## for (strategy ...)
 
+
 message("*** doFuture - automatically finding globals ... DONE")
 
 
@@ -118,12 +121,13 @@ for (strategy in strategies) {
   
   message("- foreach(f = X, ...) - 'f' containing globals ...")
   ## From https://github.com/futureverse/future.apply/issues/12
-  z1 <- foreach(f = F, g = G) %do% list(f(), g())
+  z1 <- foreach(f = F, g = G) %dofuture% list(f(), g())
   str(z1)
   stopifnot(identical(z1, z0))
 
   # Shutdown current plan
   plan(sequential)
 } ## for (strategy ...)
+
 
 message("*** doFuture - automatically finding globals in 'args_list' ... DONE")

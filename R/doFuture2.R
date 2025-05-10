@@ -398,6 +398,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     if (length(globals_X) > 0L) {
       reserved <- intersect(c("...future.FUN", "...future.x_ii"), names(globals_X))
       if (length(reserved) > 0) {
+        mdebugf_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
+        mdebugf_pop() ## "Chunk #%d of %d ..."
+        mdebugf_pop() ## "Launching %d futures (chunks) ..."
         stop("Detected globals in 'args_list' using reserved variables names: ",
              paste(sQuote(reserved), collapse = ", "))
       }
@@ -410,7 +413,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     
     rm(list = c("globals_X", "packages_X"))
     
-    if (debug) mdebug_pop()
+    if (debug) mdebug_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
 
     rm(list = "args_list_ii")
     
@@ -441,10 +444,10 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     ## Not needed anymore
     rm(list = c("chunk", "globals_ii", "packages_ii"))
 
-    if (debug) mdebug_pop()
+    if (debug) mdebug_pop() ## "Chunk #%d of %d ..."
   } ## for (ii ...)
   rm(list = c("globals", "packages", "labels", "seeds"))
-  if (debug) mdebug_pop()
+  if (debug) mdebug_pop() ## "Launching %d futures (chunks) ..."
   stop_if_not(length(fs) == nchunks)
 
 
@@ -452,76 +455,81 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   ## 6. Resolve futures, gather their values, and reduce
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Resolve futures
-  if (debug) {
-    mdebugf_push("Resolving %d futures (chunks) ...", nchunks)
-    mdebug("Gathering results & relaying conditions (except errors)")
-  }
+  values <- local({
+    if (debug) {
+      mdebugf_push("Resolving %d futures (chunks) ...", nchunks)
+      mdebug("Gathering results & relaying conditions (except errors)")
+      on.exit(mdebug_pop())
+    }
   
-  ## Check for RngFutureCondition:s when resolving futures?
-  if (isFALSE(seed)) {
-    withCallingHandlers({
-      values <- local({
-        oopts <- options(future.rng.onMisuse.keepFuture = FALSE)
-        on.exit(options(oopts))
-        value(fs)
-      })
-    }, RngFutureCondition = function(cond) {
-      ## One of "our" futures?
-      idx <- NULL
-      
-      ## Compare future UUIDs or whole futures?
-      uuid <- attr(cond, "uuid")
-      if (!is.null(uuid)) {
-        ## (a) Future UUIDs are available
-        for (kk in seq_along(fs)) {
-          if (identical(fs[[kk]]$uuid, uuid)) idx <- kk
+    ## Check for RngFutureCondition:s when resolving futures?
+    if (isFALSE(seed)) {
+      withCallingHandlers({
+        values <- local({
+          oopts <- options(future.rng.onMisuse.keepFuture = FALSE)
+          on.exit(options(oopts))
+          value(fs)
+        })
+      }, RngFutureCondition = function(cond) {
+        ## One of "our" futures?
+        idx <- NULL
+        
+        ## Compare future UUIDs or whole futures?
+        uuid <- attr(cond, "uuid")
+        if (!is.null(uuid)) {
+          ## (a) Future UUIDs are available
+          for (kk in seq_along(fs)) {
+            if (identical(fs[[kk]]$uuid, uuid)) idx <- kk
+          }
+        } else {        
+          ## (b) Future UUIDs are not available, use Future object?
+          f <- attr(cond, "future")
+          if (is.null(f)) return()
+          ## Nothing to do?
+          if (!isFALSE(f$seed)) return()  ## shouldn't really happen
+          for (kk in seq_along(fs)) {
+            if (identical(fs[[kk]], f)) idx <- kk
+          }
         }
-      } else {        
-        ## (b) Future UUIDs are not available, use Future object?
-        f <- attr(cond, "future")
-        if (is.null(f)) return()
-        ## Nothing to do?
-        if (!isFALSE(f$seed)) return()  ## shouldn't really happen
-        for (kk in seq_along(fs)) {
-          if (identical(fs[[kk]], f)) idx <- kk
+        
+        ## Nothing more to do, i.e. not one of our futures?
+        if (is.null(idx)) return()
+  
+        ## Adjust message to give instructions relevant to this package
+        f <- fs[[idx]]
+        label <- f$label
+        if (is.null(label)) label <- "<none>"
+        chunk <- chunks[[idx]]
+        ordering <- attr(chunks, "ordering")
+        if (!is.null(ordering)) {
+          chunk <- ordering[chunk]
         }
-      }
-      
-      ## Nothing more to do, i.e. not one of our futures?
-      if (is.null(idx)) return()
-
-      ## Adjust message to give instructions relevant to this package
-      f <- fs[[idx]]
-      label <- f$label
-      if (is.null(label)) label <- "<none>"
-      chunk <- chunks[[idx]]
-      ordering <- attr(chunks, "ordering")
-      if (!is.null(ordering)) {
-        chunk <- ordering[chunk]
-      }
-      if (length(chunk) == 1L) {
-        iterations <- sprintf("Iteration %d", chunk)
-      } else {
-        iterations <- seq_to_human(chunk)
-        iterations <- sprintf("At least one of iterations %s", iterations)
-      }
-      message <- sprintf("UNRELIABLE VALUE: %s of the foreach() %%dofuture%% { ... }, part of chunk #%d (%s), unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify foreach() argument '.options.future = list(seed = TRUE)'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", iterations, idx, sQuote(label))
-      cond$message <- message
-      if (inherits(cond, "warning")) {
-        warning(cond)
-        invokeRestart("muffleWarning")
-      } else if (inherits(cond, "error")) {
-        stop(cond)
-      }
-    }) ## withCallingHandlers()
-  } else {
-    values <- value(fs)
-  }
+        if (length(chunk) == 1L) {
+          iterations <- sprintf("Iteration %d", chunk)
+        } else {
+          iterations <- seq_to_human(chunk)
+          iterations <- sprintf("At least one of iterations %s", iterations)
+        }
+        message <- sprintf("UNRELIABLE VALUE: %s of the foreach() %%dofuture%% { ... }, part of chunk #%d (%s), unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify foreach() argument '.options.future = list(seed = TRUE)'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", iterations, idx, sQuote(label))
+        cond$message <- message
+        if (inherits(cond, "warning")) {
+          warning(cond)
+          invokeRestart("muffleWarning")
+        } else if (inherits(cond, "error")) {
+          mdebugf_pop() ## "Resolving %d futures (chunks) ..."
+          stop(cond)
+        }
+      }) ## withCallingHandlers()
+    } else {
+      values <- value(fs)
+    }
+    values
+  }) ## local()
   rm(list = c("fs", "chunks"))
 
   if (debug) {
     mdebugf("Number of value chunks collected: %d", length(values))
-    mdebug_pop()
+    mdebug_pop() ## "Resolving %d futures (chunks) ..."
   }
 
   stop_if_not(length(values) == nchunks)
@@ -541,29 +549,29 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
   ## Assertions
   if (length(results2) != length(args_list)) {
-      chunk_sizes <- sapply(results, FUN = length)
-      chunk_sizes <- table(chunk_sizes)
-      chunk_summary <- sprintf("%d chunks with %s elements", 
-          chunk_sizes, names(chunk_sizes))
-      chunk_summary <- paste(chunk_summary, collapse = ", ")
-      msg <- sprintf("Unexpected error in doFuture(): After gathering and merging the results 
-om %d chunks in to a list, the total number of elements (= %d) does not match the number of in
-t elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)", 
-          nchunks, length(results2), length(args_list), nchunks, 
-          sum(chunk_sizes), chunk_summary)
-      if (debug) {
-          mdebug(msg)
-          mprint(chunk_sizes)
-          mdebug("Results before merge chunks:")
-          mstr(results)
-          mdebug("Results after merge chunks:")
-          mstr(results2)
-      }
-      msg <- sprintf("%s. Example of the first few values: %s", 
-          msg, paste(capture.output(str(head(results2, 3L))), 
-              collapse = "\\n"))
-      ex <- FutureError(msg)
-      stop(ex)
+    chunk_sizes <- sapply(results, FUN = length)
+    chunk_sizes <- table(chunk_sizes)
+    chunk_summary <- sprintf("%d chunks with %s elements", 
+        chunk_sizes, names(chunk_sizes))
+    chunk_summary <- paste(chunk_summary, collapse = ", ")
+    msg <- sprintf("Unexpected error in doFuture(): After gathering and merging the results 
+ %d chunks in to a list, the total number of elements (= %d) does not match the number of in
+elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)", 
+        nchunks, length(results2), length(args_list), nchunks, 
+        sum(chunk_sizes), chunk_summary)
+    if (debug) {
+        mdebug(msg)
+        mprint(chunk_sizes)
+        mdebug("Results before merge chunks:")
+        mstr(results)
+        mdebug("Results after merge chunks:")
+        mstr(results2)
+    }
+    msg <- sprintf("%s. Example of the first few values: %s", 
+        msg, paste(capture.output(str(head(results2, 3L))), 
+            collapse = "\\n"))
+    ex <- FutureError(msg)
+    stop(ex)
   }
   values <- values2 <- results <- NULL
 
@@ -585,6 +593,7 @@ t elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
     msg <- c("Failed to combine foreach() %dofuture% results, which suggests an invalid '.combine' argument. The reported error was:", msg)
     ex <- FutureError(paste(msg, collapse = "\n"))
     ex$original_error <- e
+    if (debug) mdebug_pop() ## "Accumulating results ..."
     stop(ex)
   })
   rm(list = "values")
@@ -599,6 +608,7 @@ t elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
   if (!is.null(error_value)) {
     ## Report on errors like elsewhere in the Futureverse (default)?
     if (errors == "future") {
+      if (debug) mdebug_pop() ## "Handling errors ..."
       stop(error_value)
     } else {  
       ## ... or as traditionally with %dopar%, which throws an error
@@ -613,12 +623,13 @@ t elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
         error_index <- getErrorIndex(it)
         msg <- sprintf('task %d failed - "%s"', error_index,
                        conditionMessage(error_value))
+        if (debug) mdebug_pop() ## "Handling errors ..."
         stop(simpleError(msg, call = expr))
       }
     }
   }
   rm(list = c("expr"))
-  if (debug) mdebug_pop()
+  if (debug) mdebug_pop() ## "Handling errors ..."
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -16,6 +16,8 @@ Suggests:
     R.rsp
 VignetteBuilder:
     R.rsp
+Remotes:
+    futureverse/future@develop
 Authors@R: c(person("Henrik", "Bengtsson",
                     role = c("aut", "cre", "cph"),
                     email = "henrikb@braju.com",
