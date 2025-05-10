@@ -25,6 +25,11 @@
 
  * Add support for `with(registerDoFuture(), { ... })` to temporarily
    use the doFuture adapter.
+
+ * Add support for `foreach(..., .verbose = TRUE)`, which is part of
+   the official `foreach()` API. When set, detailed debugging
+   information useful for troubleshooting is outputted to standard
+   error through R's message condition mechanism.
    
 
 # Version 1.0.2 (2025-03-15)
