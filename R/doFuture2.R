@@ -20,7 +20,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     debug <- isTRUE(debug)
   }
   if (debug) {
-    mdebug_push("doFuture2() ...")
+    mdebug_push("doFuture2() used by %dofuture% ...")
     on.exit({
       mdebug_pop()
       options(doFuture.debug = debug0)
@@ -529,7 +529,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
   if (debug) {
     mdebugf("Number of value chunks collected: %d", length(values))
-    mdebug_pop() ## "Resolving %d futures (chunks) ..."
   }
 
   stop_if_not(length(values) == nchunks)

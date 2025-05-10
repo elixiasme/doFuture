@@ -57,7 +57,7 @@ function(obj, expr, envir, data) {   #nolint
     debug <- isTRUE(debug)
   }
   if (debug) {
-    mdebug_push("doFuture() ...")
+    mdebug_push("doFuture() used by %dopar% ...")
     on.exit({
       mdebug_pop()
       options(doFuture.debug = debug0)
@@ -263,7 +263,7 @@ function(obj, expr, envir, data) {   #nolint
       mdebugf("globals.maxSize (adjusted): %.0f bytes", globals.maxSize.adjusted)
       mdebug("R expression (adjusted):")
       mprint(expr)
-      mdebug_pop(NA)
+      mdebug_pop()
     }
   } else {
     globals.maxSize.adjusted <- NULL
@@ -376,75 +376,86 @@ function(obj, expr, envir, data) {   #nolint
   ## 6. Resolve futures, gather their values, and reduce
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Resolve futures
-  if (debug) {
-    mdebugf_push("Resolving %d futures (chunks) ...", nchunks)
-    mdebug("Gathering results & relaying conditions (except errors)")
-  }
+  values <- local({
+    if (debug) {
+      mdebugf_push("Resolving %d futures (chunks) ...", nchunks)
+      mdebug("Gathering results & relaying conditions (except errors)")
+      on.exit(mdebug_pop())
+    }
 
-  ## Check for RngFutureCondition:s when resolving futures?
-  if (isFALSE(seed)) {
-    withCallingHandlers({
+    ## Check for RngFutureCondition:s when resolving futures?
+    if (isFALSE(seed)) {
+      withCallingHandlers({
+        resolve(fs, result = TRUE, stdout = TRUE, signal = TRUE)
+      }, RngFutureCondition = function(cond) {
+        ## One of "our" futures?
+        idx <- NULL
+        
+        ## Compare future UUIDs or whole futures?
+        uuid <- attr(cond, "uuid")
+        if (!is.null(uuid)) {
+          ## (a) Future UUIDs are available
+          for (kk in seq_along(fs)) {
+            if (identical(fs[[kk]]$uuid, uuid)) idx <- kk
+          }
+        } else {        
+          ## (b) Future UUIDs are not available, use Future object?
+          f <- attr(cond, "future")
+          if (is.null(f)) return()
+          ## Nothing to do?
+          if (!isFALSE(f$seed)) return()  ## shouldn't really happen
+          for (kk in seq_along(fs)) {
+            if (identical(fs[[kk]], f)) idx <- kk
+          }
+        }
+        
+        ## Nothing more to do, i.e. not one of our futures?
+        if (is.null(idx)) return()
+  
+        ## Adjust message to give instructions relevant to this package
+        f <- fs[[idx]]
+        label <- f$label
+        if (is.null(label)) label <- "<none>"
+        message <- sprintf("UNRELIABLE VALUE: One of the foreach() iterations (%s) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, use '%%dorng%%' from the 'doRNG' package instead of '%%dopar%%'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", sQuote(label))
+        cond$message <- message
+        if (inherits(cond, "warning")) {
+          warning(cond)
+          invokeRestart("muffleWarning")
+        } else if (inherits(cond, "error")) {
+          workarounds <- getOption("doFuture.workarounds")
+          if ("BiocParallel.DoParam.errors" %in% workarounds) {
+            cond$message <- sprintf('task %d failed - "%s"',
+                                    kk, conditionMessage(cond))
+          }
+          stop(cond)
+        }
+      }) ## withCallingHandlers()
+    } else {
       resolve(fs, result = TRUE, stdout = TRUE, signal = TRUE)
-    }, RngFutureCondition = function(cond) {
-      ## One of "our" futures?
-      idx <- NULL
-      
-      ## Compare future UUIDs or whole futures?
-      uuid <- attr(cond, "uuid")
-      if (!is.null(uuid)) {
-        ## (a) Future UUIDs are available
-        for (kk in seq_along(fs)) {
-          if (identical(fs[[kk]]$uuid, uuid)) idx <- kk
-        }
-      } else {        
-        ## (b) Future UUIDs are not available, use Future object?
-        f <- attr(cond, "future")
-        if (is.null(f)) return()
-        ## Nothing to do?
-        if (!isFALSE(f$seed)) return()  ## shouldn't really happen
-        for (kk in seq_along(fs)) {
-          if (identical(fs[[kk]], f)) idx <- kk
-        }
-      }
-      
-      ## Nothing more to do, i.e. not one of our futures?
-      if (is.null(idx)) return()
-
-      ## Adjust message to give instructions relevant to this package
-      f <- fs[[idx]]
-      label <- f$label
-      if (is.null(label)) label <- "<none>"
-      message <- sprintf("UNRELIABLE VALUE: One of the foreach() iterations (%s) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, use '%%dorng%%' from the 'doRNG' package instead of '%%dopar%%'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", sQuote(label))
-      cond$message <- message
-      if (inherits(cond, "warning")) {
-        warning(cond)
-        invokeRestart("muffleWarning")
-      } else if (inherits(cond, "error")) {
-        workarounds <- getOption("doFuture.workarounds")
-        if ("BiocParallel.DoParam.errors" %in% workarounds) {
-          cond$message <- sprintf('task %d failed - "%s"',
-                                  kk, conditionMessage(cond))
-        }
-        stop(cond)
-      }
-    }) ## withCallingHandlers()
-  } else {
-    resolve(fs, result = TRUE, stdout = TRUE, signal = TRUE)
-  }
+    }
+  }) ## local()
 
   ## Gather values
-  if (debug) mdebug("Collecting values of futures")
   results <- local({
+    if (debug) mdebug_push("Collecting values of futures ...")
     oopts <- options(future.rng.onMisuse.keepFuture = FALSE)
-    on.exit(options(oopts))
+    on.exit({
+      options(oopts)
+      if (debug) mdebug_pop()
+    })
     lapply(fs, FUN = value, stdout = FALSE, signal = FALSE)
   })
   rm(list = "fs")
   stop_if_not(length(results) == nchunks)
 
   ## Reduce chunks
-  results2 <- do.call(c, args = results)
-
+  results2 <- local({
+    if (debug) {
+      mdebug_push("Reducing chunks ...")
+      on.exit(mdebug_pop())
+    }
+    do.call(c, args = results)
+  })
 
 
   if (length(results2) != length(args_list)) {
@@ -470,7 +481,7 @@ function(obj, expr, envir, data) {   #nolint
   }
   results <- results2
   rm(list = "results2")
-  if (debug) mdebug_pop()
+
 
   ## Combine results (and identify errors)
   ## NOTE: This is adopted from foreach:::doSEQ()
@@ -491,7 +502,7 @@ function(obj, expr, envir, data) {   #nolint
     NULL
   })
   rm(list = "results")
-  if (debug) mdebug_pop()
+  if (debug) mdebug_pop() ## "Accumulating results ..."
 
   
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -509,10 +520,11 @@ function(obj, expr, envir, data) {   #nolint
     error_index <- getErrorIndex(it)
     msg <- sprintf('task %d failed - "%s"', error_index,
                    conditionMessage(error_value))
+    if (debug) mdebug_pop() ## "Handling errors ..."
     stop(simpleError(msg, call = expr))
   }
   rm(list = c("expr"))
-  if (debug) mdebug_pop()
+  if (debug) mdebug_pop() ## "Handling errors ..."
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
