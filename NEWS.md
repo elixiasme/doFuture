@@ -2,14 +2,6 @@
 
 ## New Features
 
- * `foreach()` with `%dofuture%` will now exit early as soon as it
-   detects an error in one of the iterations. Remaining iterations are
-   canceled and iterrupted if the future backend supports it,
-   releasing compute resources soon and avoiding having to wait for
-   remaining futures to be resolved.  Similarly, `foreach()` with
-   `%dopar%` will also exit early when using `registerDoFuture(flavor
-   = "%dofuture%")`.
-
  * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
    `%dopar%` infix operator behave as if `%dofuture%` would have been
    used. This makes it possible for you to use `%dofuture%`, even if
@@ -22,6 +14,14 @@
    ideally should use `%dorng%` of the **doRNG** package instead of
    `%dopar%`. Using `%dofuture%` resolves such issues, because it will
    use a proper parallel RNG set by the futureverse ecosystem.
+
+ * `foreach()` with `%dofuture%` will now exit early as soon as it
+   detects an error in one of the iterations. Remaining iterations are
+   canceled and interrupted if the future backend supports it,
+   releasing compute resources soon and avoiding having to wait for
+   remaining futures to be resolved.  Similarly, `foreach()` with
+   `%dopar%` will also exit early when using `registerDoFuture(flavor
+   = "%dofuture%")`.
 
  * Add support for `with(registerDoFuture(), { ... })` to temporarily
    use the doFuture adapter.
