@@ -1,7 +1,7 @@
 #' @tags %dofuture%
 #' @tags detritus-files
 #' @tags cluster fork
-#' @tags skip_cran
+#' @tags skip_on_cran
 
 library(doFuture)
 options(future.debug = FALSE)

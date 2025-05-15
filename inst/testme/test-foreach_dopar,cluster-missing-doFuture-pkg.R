@@ -1,7 +1,7 @@
 #' @tags %dopar%
 #' @tags detritus-files
 #' @tags sequential cluster
-#' @tags skip_cran
+#' @tags skip_on_cran
 
 library(doFuture)
 options(future.debug = FALSE)
