@@ -1,23 +1,24 @@
-# Version 1.0.2-9002 (2025-05-09)
+# Version 1.0.2-9016 (2025-05-19)
 
 ## New Features
 
  * `foreach()` with `%dofuture%` will now exit early as soon as it
-   detects an error in one of the iterations. Remaining iterations are
-   canceled and interrupted if the future backend supports it,
-   releasing compute resources soon and avoiding having to wait for
-   remaining futures to be resolved.  Similarly, `foreach()` with
-   `%dopar%` will also exit early when using `registerDoFuture(flavor
-   = "%dofuture%")`.
+   detects an error in one of the iterations. It will also exit early
+   if it detects a user interrupt (e.g. Ctrl-C). Remaining iterations
+   are canceled and interrupted if the future backend supports it,
+   releasing compute resources sooner and avoiding having to wait for
+   remaining futures to be resolved. Similarly, `foreach()` with
+   `%dopar%` will also exit early when using the new
+   `registerDoFuture(flavor = "%dofuture%")`.
 
  * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
    `%dopar%` infix operator behave as if `%dofuture%` would have been
    used. This makes it possible for you to use `%dofuture%`, even if
    you do not have the option to update the code that uses
-   `%dopar%`. For instance, if you use a package that uses
-   `foreach(...) %dopar% { ... }` internally, this flavor allows you
-   to effectively make that the same as `foreach(...) %dofuture% {
-   ... }`.  This is particularly useful if you suspect that the code
+   `%dopar%`. For instance, if you use one of the many packages that
+   uses `foreach(...) %dopar% { ... }` internally, this flavor allows
+   you to effectively make that the same as `foreach(...)  %dofuture%
+   { ... }`.  This is particularly useful if you suspect that the code
    does not account for random number generation (RNG), where it
    ideally should use `%dorng%` of the **doRNG** package instead of
    `%dopar%`. Using `%dofuture%` resolves such issues, because it will

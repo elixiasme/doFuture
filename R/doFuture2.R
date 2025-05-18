@@ -1,6 +1,8 @@
 #' @importFrom foreach getErrorIndex getErrorValue getResult makeAccum
 #' @importFrom iterators iter
-#' @importFrom future future resolve value Future FutureError getGlobalsAndPackages
+#' @importFrom future cancel future resolve value
+#'                    Future getGlobalsAndPackages
+#'                    FutureError FutureInterruptError
 #' @importFrom parallel splitIndices
 #' @importFrom utils head capture.output
 #' @importFrom globals globalsByName
@@ -455,7 +457,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   ## 6. Resolve futures, gather their values, and reduce
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Resolve futures
-  values <- local({
+  values <- tryCatch({
     if (debug) {
       mdebugf_push("Resolving %d futures (chunks) ...", nchunks)
       mdebug("Gathering results & relaying conditions (except errors)")
@@ -524,8 +526,39 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
       values <- value(fs)
     }
     values
-  }) ## local()
-  rm(list = c("fs", "chunks"))
+  }, interrupt = identity, error = identity) ## tryCatch()
+  rm(list = "chunks")
+
+  if (inherits(values, "interrupt") || inherits(values, "error")) {
+    if (inherits(values, "interrupt")) {
+      when <- Sys.time()
+      host <- Sys.info()[["nodename"]]
+      pid <- Sys.getpid()
+      msg <- sprintf("'%%dofuture%%' interrupted at %s, while running on %s (pid %s)", format(when, format = "%FT%T"), sQuote(host), pid)
+      warning(sprintf("%s. Canceling all iterations ...", msg), immediate. = TRUE, call. = FALSE)
+      
+      ## Interrupt all futures (if an error, value() already did it)
+      fs <- cancel(fs)
+    }
+
+    ## Make sure all workers finish before continuing
+    fs <- resolve(fs)
+
+    ## Collect all results
+    void <- lapply(fs, FUN = function(f) {
+      tryCatch(value(f), error = identity)
+    })
+
+    ## Resignal error?
+    if (inherits(values, "error")) {
+      stop(values)
+    }
+
+    stop(FutureInterruptError(msg))
+  }
+
+  ## Not needed anymore
+  rm(list = "fs")
 
   if (debug) {
     mdebugf("Number of value chunks collected: %d", length(values))
