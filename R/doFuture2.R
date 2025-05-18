@@ -172,7 +172,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   if (is.null(seed)) seed <- eval(formals(future)$seed)
   if (debug) mdebugf("seed = %s", deparse(seed))
 
-  make_rng_seeds <- import_future.apply("make_rng_seeds")
+  make_rng_seeds <- import_future("make_rng_seeds")
   seeds <- make_rng_seeds(nX, seed = seed)
 
   ## Future expression (with or without setting the RNG state) and
@@ -184,8 +184,8 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
       mdebug("RNG seeds:")
       mstr(seeds)
     }
-    next_random_seed <- import_future.apply("next_random_seed")
-    set_random_seed <- import_future.apply("set_random_seed")
+    next_random_seed <- import_future("next_random_seed")
+    set_random_seed <- import_future("set_random_seed")
     ## If RNG seeds are used (given or generated), make sure to reset
     ## the RNG state afterward
     oseed <- next_random_seed()    

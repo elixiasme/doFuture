@@ -5,4 +5,3 @@
 import_future_functions <- function() {
   .debug <<- import_future(".debug", mode = "environment", default = new.env(parent = emptyenv()))
 }
-
