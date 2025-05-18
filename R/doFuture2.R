@@ -89,7 +89,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 4. Load balancing ("chunking")
+  ## 2. Load balancing ("chunking")
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## (a) .options.future = list(chunk.size = <numeric>)
   ##      cf. future_lapply(..., future.chunk.size)
@@ -113,7 +113,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 5. Create futures
+  ## 3. Prepare for creating futures
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Relay standard output or conditions?
   stdout <- options[["stdout"]]
@@ -133,8 +133,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   if (length(conditions) > 0) conditions <- structure(conditions, drop = TRUE)
 
   nchunks <- length(chunks)
-  fs <- vector("list", length = nchunks)
-  if (debug) mdebugf("Number of futures (= number of chunks): %d", nchunks)
 
   ## Adjust option 'future.globals.maxSize' to account for the fact that more
   ## than one element is processed per future.  The adjustment is done by
@@ -170,7 +168,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## Reproducible RNG (for sequential and parallel processing)
+  ## 4. Reproducible RNG
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   seed <- options[["seed"]]
   if (is.null(seed)) seed <- eval(formals(future)$seed)
@@ -215,7 +213,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 2. Construct future expression from %dofuture% expression
+  ## 5. Construct future expression from %dofuture% expression
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (debug) {
     mdebug_push("%dofuture% R expression:")
@@ -269,7 +267,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 3. Identify globals and packages
+  ## 6. Identify globals and packages
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (debug) mdebug_push("Identifying globals and packages ...")
 
@@ -365,96 +363,106 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   }
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## Creating futures
+  ## 7. Creating futures
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   labels <- sprintf("doFuture2-%s", seq_len(nchunks))
-
-  if (debug) mdebugf_push("Launching %d futures (chunks) ...", nchunks)
-  for (ii in seq_along(chunks)) {
-    chunk <- chunks[[ii]]
+  fs <- tryCatch({
     if (debug) {
-      mdebugf_push("Chunk #%d of %d ...", ii, length(chunks))
-      mdebugf("Chunk indices: [n=%d] %s", length(chunk), hpaste(chunk))
+      mdebugf_push("Launching %d futures (chunks) ...", nchunks)
+      on.exit(mdebugf_pop())
     }
-    ## Subsetting outside future is more efficient
-    globals_ii <- globals
-    packages_ii <- packages
-    args_list_ii <- args_list[chunk]
-    globals_ii[["...future.x_ii"]] <- args_list_ii
 
-    if (debug) mdebugf_push("Finding globals in 'args_list' for chunk #%d ...", ii)
-    ## Search for globals in 'args_list_ii':
-    gp <- getGlobalsAndPackages(args_list_ii, envir = envir, globals = TRUE)
-    globals_X <- gp$globals
-    packages_X <- gp$packages
-    gp <- NULL
+    fs <- vector("list", length = nchunks)
 
-    if (debug) {
-      info <- if (length(globals_X) == 0) "" else hpaste(sQuote(names(globals_X)))
-      mdebugf("Globals: [n=%d] %s", length(globals_X), info)
-      info <- if (length(packages_X) == 0) "" else hpaste(sQuote(packages))
-      mdebugf("Packages: [n=%d] %s", length(packages_X), info)
-    }
-  
-    ## Export also globals found in 'args_list_ii'
-    if (length(globals_X) > 0L) {
-      reserved <- intersect(c("...future.FUN", "...future.x_ii"), names(globals_X))
-      if (length(reserved) > 0) {
-        mdebugf_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
-        mdebugf_pop() ## "Chunk #%d of %d ..."
-        mdebugf_pop() ## "Launching %d futures (chunks) ..."
-        stop("Detected globals in 'args_list' using reserved variables names: ",
-             paste(sQuote(reserved), collapse = ", "))
+    for (ii in seq_along(chunks)) {
+      chunk <- chunks[[ii]]
+      if (debug) {
+        mdebugf_push("Chunk #%d of %d ...", ii, length(chunks))
+        mdebugf("Chunk indices: [n=%d] %s", length(chunk), hpaste(chunk))
       }
-      globals_ii <- unique(c(globals_ii, globals_X))
-
-      ## Packages needed due to globals in 'args_list_ii'?
-      if (length(packages_X) > 0L)
-        packages_ii <- unique(c(packages_ii, packages_X))
-    }
+      ## Subsetting outside future is more efficient
+      globals_ii <- globals
+      packages_ii <- packages
+      args_list_ii <- args_list[chunk]
+      globals_ii[["...future.x_ii"]] <- args_list_ii
+  
+      if (debug) mdebugf_push("Finding globals in 'args_list' for chunk #%d ...", ii)
+      ## Search for globals in 'args_list_ii':
+      gp <- getGlobalsAndPackages(args_list_ii, envir = envir, globals = TRUE)
+      globals_X <- gp$globals
+      packages_X <- gp$packages
+      gp <- NULL
+  
+      if (debug) {
+        info <- if (length(globals_X) == 0) "" else hpaste(sQuote(names(globals_X)))
+        mdebugf("Globals: [n=%d] %s", length(globals_X), info)
+        info <- if (length(packages_X) == 0) "" else hpaste(sQuote(packages))
+        mdebugf("Packages: [n=%d] %s", length(packages_X), info)
+      }
     
-    rm(list = c("globals_X", "packages_X"))
-    
-    if (debug) mdebug_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
+      ## Export also globals found in 'args_list_ii'
+      if (length(globals_X) > 0L) {
+        reserved <- intersect(c("...future.FUN", "...future.x_ii"), names(globals_X))
+        if (length(reserved) > 0) {
+          mdebugf_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
+          mdebugf_pop() ## "Chunk #%d of %d ..."
+          stop("Detected globals in 'args_list' using reserved variables names: ",
+               paste(sQuote(reserved), collapse = ", "))
+        }
+        globals_ii <- unique(c(globals_ii, globals_X))
+  
+        ## Packages needed due to globals in 'args_list_ii'?
+        if (length(packages_X) > 0L)
+          packages_ii <- unique(c(packages_ii, packages_X))
+      }
+      
+      rm(list = c("globals_X", "packages_X"))
+      
+      if (debug) mdebug_pop() ## "Finding globals in 'args_list' for chunk #%d ..."
+  
+      rm(list = "args_list_ii")
+      
+      if (!is.null(globals.maxSize.adjusted)) {
+        globals_ii <- c(globals_ii, ...future.globals.maxSize = globals.maxSize)
+      }
+  
+      ## Using RNG seeds or not?
+      if (is.null(seeds)) {
+        if (debug) mdebug("seeds: <none>")
+      } else {
+        if (debug) mdebugf("seeds: [n=%d] <seeds>", length(chunk))
+        globals_ii[["...future.seeds_ii"]] <- seeds[chunk]
+        stop_if_not(length(seeds[chunk]) > 0, is.list(seeds[chunk]))
+      }
+  
+      fs[[ii]] <- future(
+        expr_mapreduce, substitute = FALSE,
+        envir = envir,
+        globals = globals_ii,
+        packages = packages_ii,
+        seed = seed,
+        stdout = stdout,
+        conditions = conditions,
+        label = labels[ii]
+      )
+  
+      ## Not needed anymore
+      rm(list = c("chunk", "globals_ii", "packages_ii"))
+  
+      if (debug) mdebug_pop() ## "Chunk #%d of %d ..."
+    } ## for (ii ...)
 
-    rm(list = "args_list_ii")
-    
-    if (!is.null(globals.maxSize.adjusted)) {
-      globals_ii <- c(globals_ii, ...future.globals.maxSize = globals.maxSize)
-    }
-
-    ## Using RNG seeds or not?
-    if (is.null(seeds)) {
-      if (debug) mdebug("seeds: <none>")
-    } else {
-      if (debug) mdebugf("seeds: [n=%d] <seeds>", length(chunk))
-      globals_ii[["...future.seeds_ii"]] <- seeds[chunk]
-      stop_if_not(length(seeds[chunk]) > 0, is.list(seeds[chunk]))
-    }
-
-    fs[[ii]] <- future(
-      expr_mapreduce, substitute = FALSE,
-      envir = envir,
-      globals = globals_ii,
-      packages = packages_ii,
-      seed = seed,
-      stdout = stdout,
-      conditions = conditions,
-      label = labels[ii]
-    )
-
-    ## Not needed anymore
-    rm(list = c("chunk", "globals_ii", "packages_ii"))
-
-    if (debug) mdebug_pop() ## "Chunk #%d of %d ..."
-  } ## for (ii ...)
+    fs
+  }, interrupt = identity, error = identity) ## tryCatch()
   rm(list = c("globals", "packages", "labels", "seeds"))
-  if (debug) mdebug_pop() ## "Launching %d futures (chunks) ..."
+
+  ## Handle errors and interrupts (during launching of futures)
+  handleInterruptsAndErrors(fs, values = fs)
   stop_if_not(length(fs) == nchunks)
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 6. Resolve futures, gather their values, and reduce
+  ## 8. Resolve futures, gather their values, and reduce
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Resolve futures
   values <- tryCatch({
@@ -529,33 +537,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   }, interrupt = identity, error = identity) ## tryCatch()
   rm(list = "chunks")
 
-  if (inherits(values, "interrupt") || inherits(values, "error")) {
-    if (inherits(values, "interrupt")) {
-      when <- Sys.time()
-      host <- Sys.info()[["nodename"]]
-      pid <- Sys.getpid()
-      msg <- sprintf("'%%dofuture%%' interrupted at %s, while running on %s (pid %s)", format(when, format = "%FT%T"), sQuote(host), pid)
-      warning(sprintf("%s. Canceling all iterations ...", msg), immediate. = TRUE, call. = FALSE)
-      
-      ## Interrupt all futures (if an error, value() already did it)
-      fs <- cancel(fs)
-    }
-
-    ## Make sure all workers finish before continuing
-    fs <- resolve(fs)
-
-    ## Collect all results
-    void <- lapply(fs, FUN = function(f) {
-      tryCatch(value(f), error = identity)
-    })
-
-    ## Resignal error?
-    if (inherits(values, "error")) {
-      stop(values)
-    }
-
-    stop(FutureInterruptError(msg))
-  }
+  ## Handle errors and interrupts (during collection of futures)
+  handleInterruptsAndErrors(fs, values = values)
+  stop_if_not(length(values) == nchunks)
 
   ## Not needed anymore
   rm(list = "fs")
@@ -564,7 +548,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     mdebugf("Number of value chunks collected: %d", length(values))
   }
 
-  stop_if_not(length(values) == nchunks)
   if (debug) mdebugf("Reducing values from %d chunks ...", nchunks)
 
   if (debug) {
@@ -607,6 +590,10 @@ elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
   }
   values <- values2 <- results <- NULL
 
+
+  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ## 10. Accumlate results
+  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Combine results (and identify errors)
   ## NOTE: This is adopted from foreach:::doSEQ()
   if (debug) mdebug_push("Accumulating results ...")
@@ -633,7 +620,7 @@ elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 7. Error handling
+  ## 11. Error handling
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (debug) mdebug_push("Handling errors ...")
   error_value <- getErrorValue(it)
@@ -665,7 +652,7 @@ elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
 
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## 8. Final results
+  ## 12. Final results
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (debug) mdebug_push("Extracting results ...")
   res <- getResult(it)
@@ -806,3 +793,44 @@ tmpl_expr_options <- bquote_compile({
   }
   .(expr)
 })
+
+
+
+handleInterruptsAndErrors <- function(fs, values = fs, debug = FALSE) {
+  if (debug) {
+    mdebug_push("handleInterruptsAndErrors() ...")
+    mdebug(sprintf("Result: <%s>", class(values)[1]))
+    on.exit(mdebug_pop())
+  }
+  
+  if (!inherits(values, "interrupt") && !inherits(values, "error")) return(fs)
+  
+  if (inherits(values, "interrupt")) {
+    when <- Sys.time()
+    host <- Sys.info()[["nodename"]]
+    pid <- Sys.getpid()
+    msg <- sprintf("'%%dofuture%%' interrupted at %s, while running on %s (pid %s)", format(when, format = "%FT%T"), sQuote(host), pid)
+    warning(sprintf("%s. Canceling all iterations ...", msg), immediate. = TRUE, call. = FALSE)
+      
+    ## Interrupt all futures (if an error, value() already did it)
+    fs <- cancel(fs)
+  }
+
+  ## Make sure all workers finish before continuing
+  fs <- resolve(fs)
+
+  ## Collect all results
+  void <- lapply(fs, FUN = function(f) {
+    tryCatch(value(f), error = identity)
+  })
+
+  ## Signal error or interrupt?
+  if (inherits(fs, "error")) {
+    ex <- fs
+  } else {
+    ex <- FutureInterruptError(msg)
+  }
+  if (debug) mdebug(sprintf("Signaling: <%s>", class(ex)[1]))
+
+  stop(ex)
+} ## handleInterruptsAndErrors()
