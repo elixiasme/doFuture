@@ -453,11 +453,14 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     } ## for (ii ...)
 
     fs
-  }, interrupt = identity, error = identity) ## tryCatch()
+  }, interrupt = function(int) {
+    onDoFutureInterrupt(int, debug = debug)
+  }, error = function(e) {
+    onDoFutureError(e, futures = fs, debug = debug)
+  }) ## tryCatch()
   rm(list = c("globals", "packages", "labels", "seeds"))
 
   ## Handle errors and interrupts (during launching of futures)
-  handleInterruptsAndErrors(fs, values = fs)
   stop_if_not(length(fs) == nchunks)
 
 
@@ -534,11 +537,12 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
       values <- value(fs)
     }
     values
-  }, interrupt = identity, error = identity) ## tryCatch()
+  }, interrupt = function(int) {
+    onDoFutureInterrupt(int, debug = debug)
+  }, error = function(e) {
+    onDoFutureError(e, futures = fs, debug = debug)
+  }) ## tryCatch()
   rm(list = "chunks")
-
-  ## Handle errors and interrupts (during collection of futures)
-  handleInterruptsAndErrors(fs, values = values)
   stop_if_not(length(values) == nchunks)
 
   ## Not needed anymore
@@ -796,41 +800,43 @@ tmpl_expr_options <- bquote_compile({
 
 
 
-handleInterruptsAndErrors <- function(fs, values = fs, debug = FALSE) {
+onDoFutureInterrupt <- function(int, debug = FALSE) {
   if (debug) {
-    mdebug_push("handleInterruptsAndErrors() ...")
-    mdebug(sprintf("Result: <%s>", class(values)[1]))
+    mdebug_push("onDoFutureInterrupt() ...")
+    mdebug(sprintf("Received <%s>", class(int)[1]))
     on.exit(mdebug_pop())
   }
   
-  if (!inherits(values, "interrupt") && !inherits(values, "error")) return(fs)
-  
-  if (inherits(values, "interrupt")) {
-    when <- Sys.time()
-    host <- Sys.info()[["nodename"]]
-    pid <- Sys.getpid()
-    msg <- sprintf("'%%dofuture%%' interrupted at %s, while running on %s (pid %s)", format(when, format = "%FT%T"), sQuote(host), pid)
-    warning(sprintf("%s. Canceling all iterations ...", msg), immediate. = TRUE, call. = FALSE)
-      
-    ## Interrupt all futures (if an error, value() already did it)
-    fs <- cancel(fs)
+  when <- Sys.time()
+  host <- Sys.info()[["nodename"]]
+  pid <- Sys.getpid()
+  msg <- sprintf("'%%dofuture%%' interrupted at %s, while running on %s (pid %s)", format(when, format = "%FT%T"), sQuote(host), pid)
+  warning(sprintf("%s. Canceling all iterations ...", msg), immediate. = TRUE, call. = FALSE)
+
+  ## By signaling the interrupt as an error, the next handler, which should
+  ## be onDoFutureError(), will take care of canceling outstanding futures
+  stop(FutureInterruptError(msg))
+} ## onDoFutureInterrupt()
+
+
+
+onDoFutureError <- function(ex, futures, debug = FALSE) {
+  if (debug) {
+    mdebug_push("onDoFutureError() ...")
+    mdebug(sprintf("Received <%s>", class(ex)[1]))
+    on.exit(mdebug_pop())
   }
+  
+  ## Interrupt all futures
+  futures <- cancel(futures)
 
   ## Make sure all workers finish before continuing
-  fs <- resolve(fs)
+  futures <- resolve(futures)
 
   ## Collect all results
-  void <- lapply(fs, FUN = function(f) {
-    tryCatch(value(f), error = identity)
-  })
+  for (f in futures) tryCatch(value(f), error = identity)
 
-  ## Signal error or interrupt?
-  if (inherits(fs, "error")) {
-    ex <- fs
-  } else {
-    ex <- FutureInterruptError(msg)
-  }
   if (debug) mdebug(sprintf("Signaling: <%s>", class(ex)[1]))
 
   stop(ex)
-} ## handleInterruptsAndErrors()
+} ## onDoFutureError()
