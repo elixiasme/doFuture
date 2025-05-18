@@ -1,4 +1,4 @@
-# Version 1.0.2-9020 (2025-05-19)
+# Version 1.0.2-9022 (2025-05-19)
 
 ## New Features
 
@@ -16,11 +16,7 @@
    `%dopar%`. For instance, if you use one of the many packages that
    uses `foreach(...) %dopar% { ... }` internally, this flavor allows
    you to effectively make that the same as `foreach(...)  %dofuture%
-   { ... }`.  This is particularly useful if you suspect that the code
-   does not account for random number generation (RNG), where it
-   ideally should use `%dorng%` of the **doRNG** package instead of
-   `%dopar%`. Using `%dofuture%` resolves such issues, because it will
-   use a proper parallel RNG set by the futureverse ecosystem.
+   { ... }`.
 
  * Add support for `with(registerDoFuture(), { ... })` to temporarily
    use the doFuture adapter.
