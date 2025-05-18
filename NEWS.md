@@ -1,15 +1,13 @@
-# Version 1.0.2-9016 (2025-05-19)
+# Version 1.0.2-9020 (2025-05-19)
 
 ## New Features
 
- * `foreach()` with `%dofuture%` will now exit early as soon as it
-   detects an error in one of the iterations. It will also exit early
-   if it detects a user interrupt (e.g. Ctrl-C). Remaining iterations
-   are canceled and interrupted if the future backend supports it,
-   releasing compute resources sooner and avoiding having to wait for
-   remaining futures to be resolved. Similarly, `foreach()` with
-   `%dopar%` will also exit early when using the new
-   `registerDoFuture(flavor = "%dofuture%")`.
+ * `foreach()` with `%dofuture%` or `%dopar%` will now exit early as
+   soon as it detects an error in one of the iterations. It will also
+   exit early if it detects a user interrupt (e.g. Ctrl-C). Remaining
+   iterations are canceled and interrupted if the future backend
+   supports it, releasing compute resources sooner and avoiding having
+   to wait for remaining futures to be resolved.
 
  * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
    `%dopar%` infix operator behave as if `%dofuture%` would have been

@@ -1,3 +1,4 @@
+#' @importFrom future FutureInterruptError
 onDoFutureInterrupt <- function(int, op_name = "%dofuture%", debug = FALSE) {
   if (debug) {
     mdebug_push("onDoFutureInterrupt() ...")
@@ -17,6 +18,7 @@ onDoFutureInterrupt <- function(int, op_name = "%dofuture%", debug = FALSE) {
 
 
 
+#' @importFrom future cancel resolve value
 onDoFutureError <- function(ex, futures, debug = FALSE) {
   if (debug) {
     mdebug_push("onDoFutureError() ...")

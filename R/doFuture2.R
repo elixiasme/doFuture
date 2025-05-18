@@ -1,8 +1,6 @@
 #' @importFrom foreach getErrorIndex getErrorValue getResult makeAccum
 #' @importFrom iterators iter
-#' @importFrom future cancel future resolve value
-#'                    Future getGlobalsAndPackages
-#'                    FutureError FutureInterruptError
+#' @importFrom future future resolve value Future getGlobalsAndPackages FutureError
 #' @importFrom parallel splitIndices
 #' @importFrom utils head capture.output
 #' @importFrom globals globalsByName
@@ -459,8 +457,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     onDoFutureError(e, futures = fs, debug = debug)
   }) ## tryCatch()
   rm(list = c("globals", "packages", "labels", "seeds"))
-
-  ## Handle errors and interrupts (during launching of futures)
   stop_if_not(length(fs) == nchunks)
 
 
@@ -781,7 +777,7 @@ tmpl_expr_with_or_without_rng <- bquote_compile({
     )
     .(seed_assignment)
     ## Note, this tryCatch() hides errors from future::value(), which
-    ## is why it won't cancel all other futures  automatically
+    ## is why it won't cancel all other futures automatically
     "# Evaluate the foreach expression"
     .(expr)
   })
