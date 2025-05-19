@@ -27,13 +27,10 @@ with.DoPar <- function(data, expr, ..., local = FALSE, envir = parent.frame()) {
   ## It won't work with doParallel::registerDoParallel(), because it does not
   ## return the previous adapter. Only registerDoFuture() does that.
   oldDoPar <- data
+  
 
   undoDoPar <- function() {
-    setDoPar(
-       fun = oldDoPar[["fun"]],
-      data = oldDoPar[["data"]],
-      info = oldDoPar[["info"]]
-    )
+    do.call(setDoPar, args = oldDoPar)
   }
 
   if (local) {

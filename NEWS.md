@@ -1,4 +1,4 @@
-# Version 1.0.2-9022 (2025-05-19)
+# Version 1.0.2-9026 (2025-05-19)
 
 ## New Features
 
@@ -25,6 +25,12 @@
    uses `foreach(...) %dopar% { ... }` internally, this flavor allows
    you to effectively make that the same as `foreach(...)  %dofuture%
    { ... }`.
+
+## Bug Fixes
+
+ * `registerDoFuture()` would return an invalid `DoPar` object if
+   there was no `%dopar%` registered. Now it returns an `DoPar` object
+   as if `foreach::registerDoSEQ()` had been called before.
 
 
 # Version 1.0.2 (2025-03-15)

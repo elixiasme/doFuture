@@ -241,20 +241,23 @@ registerDoFuture <- function(flavor = c("%dopar%", "%dofuture%")) {  #nolint
 }
 
 
+#' @importFrom foreach registerDoSEQ
 .getDoPar <- function() {
   ns <- getNamespace("foreach")
   .foreachGlobals <- get(".foreachGlobals", envir = ns)
   if (exists("fun", envir = .foreachGlobals, inherits = FALSE)) {
-    structure(list(
+    res <- structure(list(
       fun  = .foreachGlobals$fun,
-      data = .foreachGlobals$data, 
+      data = .foreachGlobals$data,
       info = .foreachGlobals$info
     ), class = "DoPar")
+    if (is.null(res[["info"]])) res[["info"]] <- NULL
   } else {
-    structure(list(
+    res <- structure(list(
       fun  = get("doSEQ", mode = "function", envir = ns),
       data = NULL,
-      info = NULL
+      info = environment(registerDoSEQ)[["info"]]
     ), class = c("DoPar", "DoSeq"))
   }
+  res
 }
