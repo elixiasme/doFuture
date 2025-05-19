@@ -9,6 +9,14 @@
    supports it, releasing compute resources sooner and avoiding having
    to wait for remaining futures to be resolved.
 
+ * Add support for `foreach(..., .verbose = TRUE)`, which is part of
+   the official `foreach()` API. When set, detailed debugging
+   information useful for troubleshooting is outputted to standard
+   error through R's message condition mechanism.
+
+ * Add support for `with(registerDoFuture(), { ... })` to temporarily
+   use the doFuture adapter.
+   
  * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
    `%dopar%` infix operator behave as if `%dofuture%` would have been
    used. This makes it possible for you to use `%dofuture%`, even if
@@ -18,14 +26,6 @@
    you to effectively make that the same as `foreach(...)  %dofuture%
    { ... }`.
 
- * Add support for `with(registerDoFuture(), { ... })` to temporarily
-   use the doFuture adapter.
-
- * Add support for `foreach(..., .verbose = TRUE)`, which is part of
-   the official `foreach()` API. When set, detailed debugging
-   information useful for troubleshooting is outputted to standard
-   error through R's message condition mechanism.
-   
 
 # Version 1.0.2 (2025-03-15)
 
