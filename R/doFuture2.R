@@ -172,7 +172,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
   if (is.null(seed)) seed <- eval(formals(future)$seed)
   if (debug) mdebugf("seed = %s", deparse(seed))
 
-  make_rng_seeds <- import_future("make_rng_seeds")
   seeds <- make_rng_seeds(nX, seed = seed)
 
   ## Future expression (with or without setting the RNG state) and
@@ -184,8 +183,6 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
       mdebug("RNG seeds:")
       mstr(seeds)
     }
-    next_random_seed <- import_future("next_random_seed")
-    set_random_seed <- import_future("set_random_seed")
     ## If RNG seeds are used (given or generated), make sure to reset
     ## the RNG state afterward
     oseed <- next_random_seed()    
@@ -519,7 +516,7 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
           iterations <- seq_to_human(chunk)
           iterations <- sprintf("At least one of iterations %s", iterations)
         }
-        message <- sprintf("UNRELIABLE VALUE: %s of the foreach() %%dofuture%% { ... }, part of chunk #%d (%s), unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify foreach() argument '.options.future = list(seed = TRUE)'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", iterations, idx, sQuote(label))
+        message <- sprintf("UNRELIABLE VALUE: %s of the foreach() %%dofuture%% { ... }, part of chunk #%d (%s), unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify foreach() argument '.options.future = list(seed = TRUE)'. This ensures that proper, parallel-safe random numbers are produced. To disable this check, set option 'doFuture.rng.onMisuse' to \"ignore\".", iterations, idx, sQuote(label))
         cond$message <- message
         if (inherits(cond, "warning")) {
           warning(cond)
