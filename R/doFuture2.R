@@ -452,9 +452,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
 
     fs
   }, interrupt = function(int) {
-    onDoFutureInterrupt(int, debug = debug)
+    onInterrupt(int, op_name = "%dofuture%", debug = debug)
   }, error = function(e) {
-    onDoFutureError(e, futures = fs, debug = debug)
+    onError(e, futures = fs, debug = debug)
   }) ## tryCatch()
   rm(list = c("globals", "packages", "labels", "seeds"))
   stop_if_not(length(fs) == nchunks)
@@ -534,9 +534,9 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     }
     values
   }, interrupt = function(int) {
-    onDoFutureInterrupt(int, debug = debug)
+    onInterrupt(int, op_name = "%dofuture%", debug = debug)
   }, error = function(e) {
-    onDoFutureError(e, futures = fs, debug = debug)
+    onError(e, futures = fs, debug = debug)
   }) ## tryCatch()
   rm(list = "chunks")
   stop_if_not(length(values) == nchunks)

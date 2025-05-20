@@ -378,9 +378,9 @@ function(obj, expr, envir, data) {   #nolint
 
     fs
   }, interrupt = function(int) {
-    onDoFutureInterrupt(int, op_name = "%dopar%", debug = debug)
+    onInterrupt(int, op_name = "%dopar%", debug = debug)
   }, error = function(e) {
-    onDoFutureError(e, futures = fs, debug = debug)
+    onError(e, futures = fs, debug = debug)
   }) ## tryCatch()
   rm(list = c("chunks", "globals", "packages", "labels"))
   stop_if_not(length(fs) == nchunks)
@@ -448,9 +448,9 @@ function(obj, expr, envir, data) {   #nolint
       resolve(fs, result = TRUE, stdout = TRUE, signal = TRUE)
     }
   }, interrupt = function(int) {
-    onDoFutureInterrupt(int, op_name = "%dopar%", debug = debug)
+    onInterrupt(int, op_name = "%dopar%", debug = debug)
   }, error = function(e) {
-    onDoFutureError(e, futures = fs, debug = debug)
+    onError(e, futures = fs, debug = debug)
   }) ## tryCatch()
 
   ## Gather values
