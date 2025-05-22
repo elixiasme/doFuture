@@ -1,4 +1,4 @@
-# Version 1.0.2-9026 (2025-05-19)
+# Version 1.1.0 (2025-05-19)
 
 ## New Features
 
