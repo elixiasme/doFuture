@@ -20,9 +20,9 @@ jobs:
           - { r: "release", strategies: multicore                             }
           - { r: "release", strategies: multisession                          }
           - { r: "release", strategies: "future.callr::callr"                 }
+          - { r: "release", strategies: "future.mirai::mirai_multisession"    }
           - { r: "release", strategies: "future.batchtools::batchtools_local" }
           - { r: "release", strategies: sequential, future_version: develop, label: 'w/ future-develop' }
-          - { r: "release", strategies: sequential, future_version: feature/evalFuture-3, label: 'w/ future-feature/evalFuture-3' }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
