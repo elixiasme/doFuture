@@ -19,7 +19,7 @@
 #'    whenever using random numbers in the `expr` expression)
 #' * global variables and packages are identified automatically by
 #'   the \pkg{future} framework
-#' * errors are relayed as-is (with `%dopar%` they captured and modified)
+#' * errors are relayed as-is (with `%dopar%` they are captured and modified)
 #'
 #'
 #' @section Global variables and packages:
