@@ -14,12 +14,16 @@
 #' When using `%dofuture%`:
 #'
 #' * there is no need to use `registerDoFuture()`
+#'
 #' * there is no need to use `%dorng%` of the **doRNG** package
 #'   (but you need to specify `.options.future = list(seed = TRUE)`
 #'    whenever using random numbers in the `expr` expression)
+#'
 #' * global variables and packages are identified automatically by
 #'   the \pkg{future} framework
-#' * errors are relayed as-is (with `%dopar%` they are captured and modified)
+#'
+#' * errors are relayed as-is with the default `.errorhandling = "stop"`,
+#'   whereas with `%dopar%` they are captured and modified.
 #'
 #'
 #' @section Global variables and packages:

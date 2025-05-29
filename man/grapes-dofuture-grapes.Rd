@@ -30,7 +30,8 @@ When using \verb{\%dofuture\%}:
 whenever using random numbers in the \code{expr} expression)
 \item global variables and packages are identified automatically by
 the \pkg{future} framework
-\item errors are relayed as-is (with \verb{\%dopar\%} they are captured and modified)
+\item errors are relayed as-is with the default \code{.errorhandling = "stop"},
+whereas with \verb{\%dopar\%} they are captured and modified.
 }
 }
 \section{Global variables and packages}{

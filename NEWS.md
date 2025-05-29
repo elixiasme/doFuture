@@ -1,6 +1,11 @@
 # Version (development version)
 
- * ...
+## Bug Fixes
+
+ * `foreach(...) %dofuture% { ... }` would signal errors, despite
+   using `.errorhandling = "pass"` or `.errorhandling = "remove"`.
+   This was originally by design, because all errors should be errors,
+   but have since been convinced it was a design mistake.
  
 
 # Version 1.1.0 (2025-05-19)

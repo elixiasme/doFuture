@@ -70,19 +70,24 @@ doFuture2 <- function(obj, expr, envir, data) {   #nolint
     options[name] <- opts[name]
   }
   options(future.disposable = NULL)
-  
-  errors <- options[["errors"]]
-  if (is.null(errors)) {
-    errors <- "future"
-  } else if (is.character(errors)) {
-    if (length(errors) != 1L) {
-      stop(sprintf("Element 'errors' of '.options.future' should be of length one': [n = %d] %s", length(errors), paste(sQuote(errors), collapse = ", ")))
-    }
-    if (! errors %in% c("future", "foreach")) {
-      stop(sprintf("Unknown value of '.options.future' element 'errors': %s", sQuote(errors)))
-    }
+
+  error_handling <- obj$errorHandling
+  if (!identical(error_handling, "stop")) {
+    errors <- "foreach"
   } else {
-    stop("Unknown type of '.options.future' element 'errors': ", mode(errors))
+    errors <- options[["errors"]]
+    if (is.null(errors)) {
+      errors <- "future"
+    } else if (is.character(errors)) {
+      if (length(errors) != 1L) {
+        stop(sprintf("Element 'errors' of '.options.future' should be of length one': [n = %d] %s", length(errors), paste(sQuote(errors), collapse = ", ")))
+      }
+      if (! errors %in% c("future", "foreach")) {
+        stop(sprintf("Unknown value of '.options.future' element 'errors': %s", sQuote(errors)))
+      }
+    } else {
+      stop("Unknown type of '.options.future' element 'errors': ", mode(errors))
+    }
   }
 
 
@@ -630,7 +635,6 @@ elements in 'X' (= %d). There were in total %d chunks and %d elements (%s)",
       ## ... or as traditionally with %dopar%, which throws an error
       ## or return the combined results
       ## NOTE: This is adopted from foreach:::doSEQ()
-      error_handling <- obj$errorHandling
       if (debug) {
         mdebugf("processing errors (handler = %s)", sQuote(error_handling))
       }
