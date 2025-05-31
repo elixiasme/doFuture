@@ -25,7 +25,9 @@
    error through R's message condition mechanism.
 
  * Add support for `with(registerDoFuture(), { ... })` to temporarily
-   use the doFuture adapter.
+   use the doFuture adapter. Can also be used as
+   `with(registerDoFuture(), local = TRUE)` to temporarily register it
+   within a function.
    
  * Add `registerDoFuture(flavor = "%dofuture%")`, which makes the
    `%dopar%` infix operator behave as if `%dofuture%` would have been
