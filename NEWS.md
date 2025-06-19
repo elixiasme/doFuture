@@ -1,6 +1,9 @@
 # Version (development version)
 
- * ...
+## Bug Fixes
+
+ * Environment variable `R_DOFUTURE_DEBUG` did not set R option
+   `doFuture.debug` as documented.
 
 
 # Version 1.1.1 (2025-06-06)
