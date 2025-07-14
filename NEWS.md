@@ -1,4 +1,4 @@
-# Version (development version)
+# Version 1.1.2 (2025-07-14)
 
 ## Bug Fixes
 
