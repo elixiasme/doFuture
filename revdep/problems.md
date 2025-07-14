@@ -6,7 +6,7 @@
 * GitHub: https://github.com/lbau7/baskexact
 * Source code: https://github.com/cran/baskexact
 * Date/Publication: 2024-04-09 13:30:02 UTC
-* Number of recursive dependencies: 83
+* Number of recursive dependencies: 82
 
 Run `revdepcheck::revdep_details(, "baskexact")` for more info
 
@@ -28,7 +28,7 @@ Run `revdepcheck::revdep_details(, "baskexact")` for more info
 * GitHub: https://github.com/lance-waller-lab/envi
 * Source code: https://github.com/cran/envi
 * Date/Publication: 2024-11-06 19:00:03 UTC
-* Number of recursive dependencies: 151
+* Number of recursive dependencies: 150
 
 Run `revdepcheck::revdep_details(, "envi")` for more info
 
@@ -82,18 +82,18 @@ Run `revdepcheck::revdep_details(, "EQRN")` for more info
     ```
     Found the following significant warnings:
       Warning: ℹ torch failed to start, restart your R session to try again.
-    See ‘/scratch/henrik/revdep/doFuture/checks/EQRN/new/EQRN.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/EQRN/new/EQRN.Rcheck/00install.out’ for details.
     ```
 
 # GeDS
 
 <details>
 
-* Version: 0.3.1
+* Version: 0.3.3
 * GitHub: https://github.com/emilioluissaenzguillen/GeDS
 * Source code: https://github.com/cran/GeDS
-* Date/Publication: 2025-04-22 07:30:06 UTC
-* Number of recursive dependencies: 74
+* Date/Publication: 2025-06-30 07:10:06 UTC
+* Number of recursive dependencies: 76
 
 Run `revdepcheck::revdep_details(, "GeDS")` for more info
 
@@ -105,7 +105,7 @@ Run `revdepcheck::revdep_details(, "GeDS")` for more info
     ```
     Found the following significant warnings:
       Warning: no DISPLAY variable so Tk is not available
-    See ‘/scratch/henrik/revdep/doFuture/checks/GeDS/new/GeDS.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/GeDS/new/GeDS.Rcheck/00install.out’ for details.
     ```
 
 # hwep
@@ -116,7 +116,7 @@ Run `revdepcheck::revdep_details(, "GeDS")` for more info
 * GitHub: https://github.com/dcgerard/hwep
 * Source code: https://github.com/cran/hwep
 * Date/Publication: 2023-05-16 17:40:02 UTC
-* Number of recursive dependencies: 112
+* Number of recursive dependencies: 111
 
 Run `revdepcheck::revdep_details(, "hwep")` for more info
 
@@ -139,7 +139,7 @@ Run `revdepcheck::revdep_details(, "hwep")` for more info
 * GitHub: https://github.com/calabrialab/ISAnalytics
 * Source code: https://github.com/cran/ISAnalytics
 * Date/Publication: 2025-04-15
-* Number of recursive dependencies: 176
+* Number of recursive dependencies: 175
 
 Run `revdepcheck::revdep_details(, "ISAnalytics")` for more info
 
@@ -162,7 +162,7 @@ Run `revdepcheck::revdep_details(, "ISAnalytics")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/latentcor
 * Date/Publication: 2022-09-05 20:50:02 UTC
-* Number of recursive dependencies: 142
+* Number of recursive dependencies: 141
 
 Run `revdepcheck::revdep_details(, "latentcor")` for more info
 
@@ -203,7 +203,7 @@ Run `revdepcheck::revdep_details(, "latentcor")` for more info
 * GitHub: https://github.com/ntthung/ldsr
 * Source code: https://github.com/cran/ldsr
 * Date/Publication: 2020-05-04 14:40:09 UTC
-* Number of recursive dependencies: 74
+* Number of recursive dependencies: 73
 
 Run `revdepcheck::revdep_details(, "ldsr")` for more info
 
@@ -224,7 +224,7 @@ Run `revdepcheck::revdep_details(, "ldsr")` for more info
 * GitHub: https://github.com/SchlossLab/mikropml
 * Source code: https://github.com/cran/mikropml
 * Date/Publication: 2023-08-21 15:10:05 UTC
-* Number of recursive dependencies: 128
+* Number of recursive dependencies: 127
 
 Run `revdepcheck::revdep_details(, "mikropml")` for more info
 
@@ -259,7 +259,7 @@ Run `revdepcheck::revdep_details(, "mikropml")` for more info
 * GitHub: https://github.com/bmcclintock/momentuHMM
 * Source code: https://github.com/cran/momentuHMM
 * Date/Publication: 2022-10-18 20:52:35 UTC
-* Number of recursive dependencies: 150
+* Number of recursive dependencies: 149
 
 Run `revdepcheck::revdep_details(, "momentuHMM")` for more info
 
@@ -270,7 +270,7 @@ Run `revdepcheck::revdep_details(, "momentuHMM")` for more info
 *   checking whether package ‘momentuHMM’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/scratch/henrik/revdep/doFuture/checks/momentuHMM/new/momentuHMM.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/momentuHMM/new/momentuHMM.Rcheck/00install.out’ for details.
     ```
 
 ## Installation
@@ -283,11 +283,11 @@ Run `revdepcheck::revdep_details(, "momentuHMM")` for more info
 ** package ‘momentuHMM’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-using C compiler: ‘gcc (GCC) 13.3.1 20240611 (Red Hat 13.3.1-2)’
-using C++ compiler: ‘g++ (GCC) 13.3.1 20240611 (Red Hat 13.3.1-2)’
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c RcppExports.cpp -o RcppExports.o
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c XBloop.cpp -o XBloop.o
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c getDM.cpp -o getDM.o
+using C compiler: ‘gcc (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)’
+using C++ compiler: ‘g++ (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)’
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c RcppExports.cpp -o RcppExports.o
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c XBloop.cpp -o XBloop.o
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c getDM.cpp -o getDM.o
 ...
 ** data
 *** moving datasets to lazyload DB
@@ -298,7 +298,7 @@ Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) :
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
 ERROR: lazy loading failed for package ‘momentuHMM’
-* removing ‘/scratch/henrik/revdep/doFuture/checks/momentuHMM/new/momentuHMM.Rcheck/momentuHMM’
+* removing ‘/scratch/henrik/747583/checks/momentuHMM/new/momentuHMM.Rcheck/momentuHMM’
 
 
 ```
@@ -310,11 +310,11 @@ ERROR: lazy loading failed for package ‘momentuHMM’
 ** package ‘momentuHMM’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** libs
-using C compiler: ‘gcc (GCC) 13.3.1 20240611 (Red Hat 13.3.1-2)’
-using C++ compiler: ‘g++ (GCC) 13.3.1 20240611 (Red Hat 13.3.1-2)’
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c RcppExports.cpp -o RcppExports.o
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c XBloop.cpp -o XBloop.o
-g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/revdep/doFuture/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c getDM.cpp -o getDM.o
+using C compiler: ‘gcc (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)’
+using C++ compiler: ‘g++ (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)’
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c RcppExports.cpp -o RcppExports.o
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c XBloop.cpp -o XBloop.o
+g++ -std=gnu++17 -I"/software/c4/cbi/software/_rocky8/R-4.5.0-gcc13/lib64/R/include" -DNDEBUG  -I'/scratch/henrik/747583/library/momentuHMM/Rcpp/include' -I'/scratch/henrik/747583/library/momentuHMM/RcppArmadillo/include' -I/usr/local/include    -fpic  -g -O2   -c getDM.cpp -o getDM.o
 ...
 ** data
 *** moving datasets to lazyload DB
@@ -325,7 +325,7 @@ Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) :
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
 ERROR: lazy loading failed for package ‘momentuHMM’
-* removing ‘/scratch/henrik/revdep/doFuture/checks/momentuHMM/old/momentuHMM.Rcheck/momentuHMM’
+* removing ‘/scratch/henrik/747583/checks/momentuHMM/old/momentuHMM.Rcheck/momentuHMM’
 
 
 ```
@@ -361,7 +361,7 @@ Run `revdepcheck::revdep_details(, "MOODE")` for more info
 * GitHub: https://github.com/cbg-ethz/pareg
 * Source code: https://github.com/cran/pareg
 * Date/Publication: 2024-04-30
-* Number of recursive dependencies: 319
+* Number of recursive dependencies: 318
 
 Run `revdepcheck::revdep_details(, "pareg")` for more info
 
@@ -423,8 +423,8 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
     ```
     Error(s) in re-building vignettes:
     --- re-building ‘pareg.Rmd’ using rmarkdown
-    The magick package is required to crop "/scratch/henrik/revdep/doFuture/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-4-1.png" but not available.
-    The magick package is required to crop "/scratch/henrik/revdep/doFuture/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-5-1.png" but not available.
+    The magick package is required to crop "/scratch/henrik/747583/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-4-1.png" but not available.
+    The magick package is required to crop "/scratch/henrik/747583/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pareg_files/figure-html/unnamed-chunk-5-1.png" but not available.
     Channels:
      - anaconda
     Platform: linux-64
@@ -433,8 +433,8 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
     
     ...
     --- re-building ‘pathway_similarities.Rmd’ using rmarkdown
-    The magick package is required to crop "/scratch/henrik/revdep/doFuture/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pathway_similarities_files/figure-html/unnamed-chunk-2-1.png" but not available.
-    The magick package is required to crop "/scratch/henrik/revdep/doFuture/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pathway_similarities_files/figure-html/unnamed-chunk-3-1.png" but not available.
+    The magick package is required to crop "/scratch/henrik/747583/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pathway_similarities_files/figure-html/unnamed-chunk-2-1.png" but not available.
+    The magick package is required to crop "/scratch/henrik/747583/checks/pareg/new/pareg.Rcheck/vign_test/pareg/vignettes/pathway_similarities_files/figure-html/unnamed-chunk-3-1.png" but not available.
     --- finished re-building ‘pathway_similarities.Rmd’
     
     SUMMARY: processing the following file failed:
@@ -473,7 +473,7 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
     ```
     Found the following notes/warnings:
       Non-staged installation was used
-    See ‘/scratch/henrik/revdep/doFuture/checks/pareg/new/pareg.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/pareg/new/pareg.Rcheck/00install.out’ for details.
     ```
 
 # pliman
@@ -484,7 +484,7 @@ Run `revdepcheck::revdep_details(, "pareg")` for more info
 * GitHub: https://github.com/NA/NA
 * Source code: https://github.com/cran/pliman
 * Date/Publication: 2024-11-06 10:30:02 UTC
-* Number of recursive dependencies: 133
+* Number of recursive dependencies: 131
 
 Run `revdepcheck::revdep_details(, "pliman")` for more info
 
@@ -519,7 +519,7 @@ Run `revdepcheck::revdep_details(, "rechaRge")` for more info
 *   checking whether package ‘rechaRge’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/scratch/henrik/revdep/doFuture/checks/rechaRge/new/rechaRge.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/rechaRge/new/rechaRge.Rcheck/00install.out’ for details.
     ```
 
 ## Installation
@@ -538,7 +538,7 @@ Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) :
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
 ERROR: lazy loading failed for package ‘rechaRge’
-* removing ‘/scratch/henrik/revdep/doFuture/checks/rechaRge/new/rechaRge.Rcheck/rechaRge’
+* removing ‘/scratch/henrik/747583/checks/rechaRge/new/rechaRge.Rcheck/rechaRge’
 
 
 ```
@@ -556,32 +556,10 @@ Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) :
 Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
 ERROR: lazy loading failed for package ‘rechaRge’
-* removing ‘/scratch/henrik/revdep/doFuture/checks/rechaRge/old/rechaRge.Rcheck/rechaRge’
+* removing ‘/scratch/henrik/747583/checks/rechaRge/old/rechaRge.Rcheck/rechaRge’
 
 
 ```
-# simtrial
-
-<details>
-
-* Version: 0.4.2
-* GitHub: https://github.com/Merck/simtrial
-* Source code: https://github.com/cran/simtrial
-* Date/Publication: 2024-11-18 15:10:02 UTC
-* Number of recursive dependencies: 113
-
-Run `revdepcheck::revdep_details(, "simtrial")` for more info
-
-</details>
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘gsDesign2’
-      All declared Imports should be used.
-    ```
-
 # sparrpowR
 
 <details>
@@ -590,7 +568,7 @@ Run `revdepcheck::revdep_details(, "simtrial")` for more info
 * GitHub: https://github.com/machiela-lab/sparrpowR
 * Source code: https://github.com/cran/sparrpowR
 * Date/Publication: 2024-01-23 15:20:02 UTC
-* Number of recursive dependencies: 128
+* Number of recursive dependencies: 127
 
 Run `revdepcheck::revdep_details(, "sparrpowR")` for more info
 
@@ -614,7 +592,7 @@ Run `revdepcheck::revdep_details(, "sparrpowR")` for more info
 * GitHub: https://github.com/lusystemsbio/sRACIPE
 * Source code: https://github.com/cran/sRACIPE
 * Date/Publication: 2025-05-11
-* Number of recursive dependencies: 106
+* Number of recursive dependencies: 105
 
 Run `revdepcheck::revdep_details(, "sRACIPE")` for more info
 
@@ -670,7 +648,7 @@ Run `revdepcheck::revdep_details(, "sRACIPE")` for more info
 * GitHub: https://github.com/fndemarqui/survstan
 * Source code: https://github.com/cran/survstan
 * Date/Publication: 2024-04-12 16:50:02 UTC
-* Number of recursive dependencies: 114
+* Number of recursive dependencies: 113
 
 Run `revdepcheck::revdep_details(, "survstan")` for more info
 
@@ -693,7 +671,7 @@ Run `revdepcheck::revdep_details(, "survstan")` for more info
 * GitHub: https://github.com/tanaylab/tglkmeans
 * Source code: https://github.com/cran/tglkmeans
 * Date/Publication: 2024-05-15 08:40:02 UTC
-* Number of recursive dependencies: 87
+* Number of recursive dependencies: 86
 
 Run `revdepcheck::revdep_details(, "tglkmeans")` for more info
 
@@ -715,7 +693,7 @@ Run `revdepcheck::revdep_details(, "tglkmeans")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/vmeasur
 * Date/Publication: 2021-11-11 19:00:02 UTC
-* Number of recursive dependencies: 108
+* Number of recursive dependencies: 107
 
 Run `revdepcheck::revdep_details(, "vmeasur")` for more info
 
@@ -727,7 +705,7 @@ Run `revdepcheck::revdep_details(, "vmeasur")` for more info
     ```
     Found the following significant warnings:
       Warning: no DISPLAY variable so Tk is not available
-    See ‘/scratch/henrik/revdep/doFuture/checks/vmeasur/new/vmeasur.Rcheck/00install.out’ for details.
+    See ‘/scratch/henrik/747583/checks/vmeasur/new/vmeasur.Rcheck/00install.out’ for details.
     ```
 
 # WeightedCluster
@@ -746,28 +724,6 @@ Run `revdepcheck::revdep_details(, "WeightedCluster")` for more info
 
 ## In both
 
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘BigDataSA.Rmd’ using rmarkdown
-    --- finished re-building ‘BigDataSA.Rmd’
+*   R CMD check timed out
     
-    --- re-building ‘ClusterExternalValidSA.Rmd’ using rmarkdown
-    --- finished re-building ‘ClusterExternalValidSA.Rmd’
-    
-    --- re-building ‘ClusterValidSA.Rmd’ using rmarkdown
-    --- finished re-building ‘ClusterValidSA.Rmd’
-    
-    ...
-    l.85 \usepackage
-                    {tikz}^^M
-    !  ==> Fatal error occurred, no output PDF file produced!
-    --- failed re-building ‘WeightedClusterPreview.Rnw’
-    
-    SUMMARY: processing the following files failed:
-      ‘FuzzySA.Rmd’ ‘WeightedClusterFR.Rnw’ ‘WeightedClusterPreview.Rnw’
-    
-    Error: Vignette re-building failed.
-    Execution halted
-    ```
 

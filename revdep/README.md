@@ -10,35 +10,36 @@
 |collate  |en_US.UTF-8                                               |
 |ctype    |en_US.UTF-8                                               |
 |tz       |America/Los_Angeles                                       |
-|date     |2025-06-05                                                |
+|date     |2025-07-14                                                |
 |pandoc   |3.6.3 @ /software/c4/cbi/software/pandoc-3.6.3/bin/pandoc |
 |quarto   |NA                                                        |
 
 # Dependencies
 
-|package      |old    |new        |Δ  |
-|:------------|:------|:----------|:--|
-|doFuture     |1.1.0  |1.1.0-9004 |*  |
-|codetools    |0.2-20 |0.2-20     |   |
-|digest       |0.6.37 |0.6.37     |   |
-|foreach      |1.5.2  |1.5.2      |   |
-|future       |1.58.0 |1.58.0     |   |
-|future.apply |1.11.3 |1.11.3     |   |
-|globals      |0.18.0 |0.18.0     |   |
-|iterators    |1.0.14 |1.0.14     |   |
-|listenv      |0.9.1  |0.9.1      |   |
-|parallelly   |1.45.0 |1.45.0     |   |
+|package      |old    |new         |Δ  |
+|:------------|:------|:-----------|:--|
+|doFuture     |1.1.1  |1.1.1-9005  |*  |
+|codetools    |0.2-20 |0.2-20      |   |
+|digest       |0.6.37 |0.6.37      |   |
+|foreach      |1.5.2  |1.5.2       |   |
+|future       |1.58.0 |1.58.0      |   |
+|future.apply |1.20.0 |1.20.0      |   |
+|globals      |0.18.0 |0.18.0      |   |
+|iterators    |1.0.14 |1.0.14      |   |
+|listenv      |0.9.1  |0.9.1       |   |
+|parallelly   |1.45.0 |1.45.0-9012 |*  |
 
 # Revdeps
 
-## Failed to check (2)
+## Failed to check (3)
 
-|package    |version |error |warning |note |
-|:----------|:-------|:-----|:-------|:----|
+|package         |version |error |warning |note |
+|:---------------|:-------|:-----|:-------|:----|
 |[momentuHMM](failures.md#momentuhmm)|1.5.5   |1     |        |     |
 |[rechaRge](failures.md#recharge)|1.0.0   |1     |        |     |
+|[WeightedCluster](failures.md#weightedcluster)|1.8-1   |1     |        |     |
 
-## All (62)
+## All (64)
 
 |package           |version |error |warning |note |
 |:-----------------|:-------|:-----|:-------|:----|
@@ -47,25 +48,26 @@
 |[baskexact](problems.md#baskexact)|1.0.1   |      |        |1    |
 |basksim           |1.0.0   |      |        |     |
 |BayesianMCPMod    |1.1.0   |      |        |     |
+|BayesRegDTR       |1.0.1   |      |        |     |
 |bhmbasket         |0.9.5   |      |        |     |
-|binaryRL          |0.8.3   |      |        |     |
+|binaryRL          |0.9.0   |      |        |     |
 |bsitar            |0.3.2   |      |        |     |
-|dbmss             |2.10-0  |      |        |     |
+|dbmss             |2.11-0  |      |        |     |
 |distantia         |2.0.2   |      |        |     |
 |[envi](problems.md#envi)|1.0.0   |1     |        |     |
 |[EQRN](problems.md#eqrn)|0.1.1   |1     |1       |     |
-|fastml            |0.5.0   |      |        |     |
+|fastml            |0.6.1   |      |        |     |
 |flexFitR          |1.2.0   |      |        |     |
 |funGp             |1.0.0   |      |        |     |
 |futureverse       |0.1.0   |      |        |     |
 |fxTWAPLS          |0.1.3   |      |        |     |
-|[GeDS](problems.md#geds)|0.3.1   |      |1       |     |
-|GeoModels         |2.1.5   |      |        |     |
+|[GeDS](problems.md#geds)|0.3.3   |      |1       |     |
+|GeoModels         |2.1.6   |      |        |     |
 |[hwep](problems.md#hwep)|2.0.2   |      |        |1    |
 |[ISAnalytics](problems.md#isanalytics)|1.18.0  |      |        |1    |
 |jackknifeR        |2.0.0   |      |        |     |
 |kergp             |0.5.8   |      |        |     |
-|kernelshap        |0.7.0   |      |        |     |
+|kernelshap        |0.8.0   |      |        |     |
 |[latentcor](problems.md#latentcor)|2.0.1   |      |        |1    |
 |[ldsr](problems.md#ldsr)|0.0.2   |      |        |1    |
 |LWFBrook90R       |0.6.2   |      |        |     |
@@ -81,16 +83,16 @@
 |[pliman](problems.md#pliman)|3.0.0   |1     |        |     |
 |polykde           |1.1.4   |      |        |     |
 |progressr         |0.15.1  |      |        |     |
-|projpred          |2.8.0   |      |        |     |
+|projpred          |2.9.0   |      |        |     |
 |[rechaRge](failures.md#recharge)|1.0.0   |1     |        |     |
 |remiod            |1.0.2   |      |        |     |
 |robust2sls        |0.2.3   |      |        |     |
 |rpm               |0.7-3   |      |        |     |
 |SCdeconR          |1.0.0   |      |        |     |
-|segtest           |1.0.2   |      |        |     |
+|segtest           |2.0.0   |      |        |     |
 |semPower          |2.1.1   |      |        |     |
 |SharkDemography   |1.1.0   |      |        |     |
-|[simtrial](problems.md#simtrial)|0.4.2   |      |        |1    |
+|simtrial          |1.0.0   |      |        |     |
 |skpr              |1.8.2   |      |        |     |
 |[sparrpowR](problems.md#sparrpowr)|0.2.8   |1     |        |     |
 |sphunif           |1.4.0   |      |        |     |
@@ -101,7 +103,8 @@
 |[tglkmeans](problems.md#tglkmeans)|0.5.5   |      |        |1    |
 |tune              |1.3.0   |      |        |     |
 |updog             |2.1.5   |      |        |     |
+|vecmatch          |1.2.0   |      |        |     |
 |[vmeasur](problems.md#vmeasur)|0.1.4   |      |1       |     |
-|WARDEN            |1.0     |      |        |     |
-|[WeightedCluster](problems.md#weightedcluster)|1.8-1   |      |1       |     |
+|WARDEN            |1.2.5   |      |        |     |
+|[WeightedCluster](failures.md#weightedcluster)|1.8-1   |1     |        |     |
 
