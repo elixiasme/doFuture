@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 name: R-CMD-check
 
@@ -20,6 +20,8 @@ jobs:
           - {os: windows-latest, r: 'release'  }
           - {os: windows-latest, r: 'oldrel'   }
 #          - {os: macOS-latest,   r: 'devel'    }
+          - {os: macOS-latest,   r: 'release', parallelly_version: ed860db, label: 'w/ compatible parallelly' }
+          - {os: macOS-latest,   r: 'release', parallelly_version: ea182e9, label: 'w/ compatible parallelly' }
           - {os: macOS-latest,   r: 'release'  }
           - {os: macOS-latest,   r: 'oldrel'   }
 #          - {os: ubuntu-latest,  r: 'devel'    }
@@ -75,18 +77,21 @@ jobs:
         run: |
           install.packages(".", repos = NULL, type = "source")  ## needed by parallel workers
           lapply(c("future.batchtools", "future.callr"), FUN = function(pkg) if (grepl(pkg, "${{ matrix.config.future_plan }}")) install.packages(pkg))
-          remotes::install_github("futureverse/parallelly", ref="develop")
         shell: Rscript {0}
 
       - name: Test with specific future version?
         run: |
           globals_version <- Sys.getenv("R_GLOBALS_VERSION")
           if (nzchar(globals_version)) {
-            remotes::install_github("futureverse/globals", ref=globals_version)
+            remotes::install_github("futureverse/globals", ref=globals_version, upgrade = FALSE)
+          }
+          parallelly_version <- Sys.getenv("R_PARALLELLY_VERSION")
+          if (nzchar(parallelly_version)) {
+            remotes::install_github("futureverse/parallelly", ref=parallelly_version, upgrade = FALSE)
           }
           future_version <- Sys.getenv("R_FUTURE_VERSION")
           if (nzchar(future_version)) {
-            remotes::install_github("futureverse/future", ref=future_version)
+            remotes::install_github("futureverse/future", ref=future_version, upgrade = FALSE)
           }
         shell: Rscript {0}
 
